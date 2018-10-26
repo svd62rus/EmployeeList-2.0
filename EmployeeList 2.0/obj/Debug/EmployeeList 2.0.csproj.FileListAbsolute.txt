@@ -1,0 +1,12 @@
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList_2._0.Properties.Resources.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList 2.0.csproj.GenerateResource.cache
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList 2.0.csproj.CoreCompileInputs.cache
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\bin\Debug\EmployeeList 2.0.exe.config
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\bin\Debug\EmployeeList 2.0.exe
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\bin\Debug\EmployeeList 2.0.pdb
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList 2.0.exe
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList 2.0.pdb
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList_2._0.Form1.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList 2.0.csprojAssemblyReference.cache
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList_2._0.FormAddDep.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Debug\EmployeeList_2._0.FormChangeDep.resources
