@@ -23,13 +23,13 @@ namespace EmployeeList_2._0
             this.mainForm = mainForm;
             this.dataGrid = dataGrid;
             dataGrid.ClearSelection();
-            textBoxDepName.TextChanged += TextBoxDepName_TextChanged; //подписка на изменение текстбокса ввода имени отдела
+            TextBoxDepName.TextChanged += TextBoxDepName_TextChanged; //подписка на изменение текстбокса ввода имени отдела
         }
 
         //Проверка на пустую строку ввода имени отдела
         private void TextBoxDepName_TextChanged(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBoxDepName.Text))
+            if (string.IsNullOrWhiteSpace(TextBoxDepName.Text))
                 buttonOK.Enabled = false;
             else
                 buttonOK.Enabled = true;
@@ -38,35 +38,42 @@ namespace EmployeeList_2._0
         //Кнопка "Добавить"
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            var inputName = textBoxDepName.Text; //название отдела в текстбоксе
+            var inputName = TextBoxDepName.Text; //название отдела в текстбоксе
             bool ident = false; //true - есть совпадение, false - нет 
             if (list.Departments.Count > 0) //если кол-во отделов > 0
             {
                 foreach (var el in list.Departments.ToArray())
-                    if (el.Name == inputName) //проверка отдела на дубликат
+                    if (el.Name.ToLower() == inputName.ToLower()) //проверка отдела на дубликат
                     {
                         var selectedRow = el.Id;
-                        mainForm.selectRowInDataGrid(dataGrid, selectedRow); //выделяем строку-дубликат
-                        MessageBox.Show($"Отдел c именем '{inputName}' уже есть");
+                        mainForm.SelectRowInDataGrid(dataGrid, selectedRow); //выделяем строку-дубликат
+                        MessageBox.Show($"Отдел c именем '{inputName}' или похожим именем уже есть!");
                         ident = true;
                         break;
                     }
 
                 if (!ident)
-                    AddProcess(inputName);
+                {
+                    AddAndShowChanges(inputName);
+                    MessageBox.Show($"Отдел '{inputName}' добавлен");
+                }                    
             }
-            else //если отделов < 0 - добавить в любом случае
-                AddProcess(inputName);
+            else
+                //если отделов < 0 - добавить в любом случае
+            {
+                AddAndShowChanges(inputName);
+                MessageBox.Show($"Отдел '{inputName}' добавлен");                
+            }
+                
         }
 
         //Процесс добавления отдела и отображение изменений в датагриде
-        private void AddProcess(string inputName)
+        private void AddAndShowChanges(string inputName)
         {
             var selectedRow = list.AddDep(inputName); //добавляем отдел
-            mainForm.refreshMainForm(); //обновляем главную форму
-            mainForm.selectRowInDataGrid(dataGrid, selectedRow);//выделяем новую строку с данными
-            MessageBox.Show($"Отдел '{inputName}' добавлен");
-            textBoxDepName.Clear();
+            mainForm.RefreshMainForm(dataGrid,list.Departments); //обновляем главную форму
+            mainForm.SelectRowInDataGrid(dataGrid, selectedRow);//выделяем новую строку с данными
+            TextBoxDepName.Clear();
         }
         //Кнопка "Отмена"
         private void buttonCancel_Click(object sender, EventArgs e)

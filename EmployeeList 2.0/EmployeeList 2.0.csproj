@@ -66,11 +66,17 @@
     <Compile Include="FormAddDep.Designer.cs">
       <DependentUpon>FormAddDep.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormChangeDep.cs">
+    <Compile Include="FormAddChangeRemEmp.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormChangeDep.Designer.cs">
-      <DependentUpon>FormChangeDep.cs</DependentUpon>
+    <Compile Include="FormAddChangeRemEmp.Designer.cs">
+      <DependentUpon>FormAddChangeRemEmp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormChangeRemDep.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormChangeRemDep.Designer.cs">
+      <DependentUpon>FormChangeRemDep.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -80,8 +86,11 @@
     <EmbeddedResource Include="FormAddDep.resx">
       <DependentUpon>FormAddDep.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormChangeDep.resx">
-      <DependentUpon>FormChangeDep.cs</DependentUpon>
+    <EmbeddedResource Include="FormAddChangeRemEmp.resx">
+      <DependentUpon>FormAddChangeRemEmp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormChangeRemDep.resx">
+      <DependentUpon>FormChangeRemDep.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -122,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="images\add.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="images\icons8.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

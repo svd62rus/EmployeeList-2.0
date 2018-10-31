@@ -29,179 +29,376 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.menuFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuLoad = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuDepartmens = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuAddDep = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuChangeDep = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuChangeDepByData = new System.Windows.Forms.ToolStripMenuItem();
-            this.dataGridDeps = new System.Windows.Forms.DataGridView();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolButtonLoad = new System.Windows.Forms.ToolStripButton();
-            this.toolButtonSave = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolButtonAddDep = new System.Windows.Forms.ToolStripButton();
-            this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridDeps)).BeginInit();
-            this.toolStrip1.SuspendLayout();
+            this.MenuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.MenuFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuLoad = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuDepartmens = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuAddDep = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuChangeDep = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuChangeDepByData = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuRemoveDep = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuRemDepByData = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuEmployers = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuAddEmp = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuChangeEmp = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuChangeEmpByData = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuRemoveEmp = new System.Windows.Forms.ToolStripMenuItem();
+            this.DataGridDeps = new System.Windows.Forms.DataGridView();
+            this.ToolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.CountOfEmpPerDep = new System.Windows.Forms.ToolStripButton();
+            this.DataGridEmps = new System.Windows.Forms.DataGridView();
+            this.LabelNameOfTableEmp = new System.Windows.Forms.Label();
+            this.LabelNameOfTableDep = new System.Windows.Forms.Label();
+            this.PanelDeps = new System.Windows.Forms.Panel();
+            this.DepartmentInfo = new System.Windows.Forms.GroupBox();
+            this.ComboBoxDeps = new System.Windows.Forms.ComboBox();
+            this.CountOfDepEmp = new System.Windows.Forms.Label();
+            this.SumOfDepSalary = new System.Windows.Forms.Label();
+            this.AvgOfDepSalary = new System.Windows.Forms.Label();
+            this.PanelEmps = new System.Windows.Forms.Panel();
+            this.TotalInfo = new System.Windows.Forms.GroupBox();
+            this.SumSalary = new System.Windows.Forms.Label();
+            this.CountOfEmp = new System.Windows.Forms.Label();
+            this.AvgSalary = new System.Windows.Forms.Label();
+            this.MenuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridDeps)).BeginInit();
+            this.ToolStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridEmps)).BeginInit();
+            this.PanelDeps.SuspendLayout();
+            this.DepartmentInfo.SuspendLayout();
+            this.PanelEmps.SuspendLayout();
+            this.TotalInfo.SuspendLayout();
             this.SuspendLayout();
             // 
-            // menuStrip1
+            // MenuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuFile,
-            this.menuDepartmens});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(588, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
+            this.MenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuFile,
+            this.MenuDepartmens,
+            this.MenuEmployers});
+            this.MenuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.MenuStrip1.Name = "MenuStrip1";
+            this.MenuStrip1.Size = new System.Drawing.Size(1008, 24);
+            this.MenuStrip1.TabIndex = 0;
+            this.MenuStrip1.Text = "menuStrip1";
             // 
-            // menuFile
+            // MenuFile
             // 
-            this.menuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuLoad,
-            this.menuSave,
-            this.menuExit});
-            this.menuFile.Name = "menuFile";
-            this.menuFile.Size = new System.Drawing.Size(48, 20);
-            this.menuFile.Text = "Файл";
+            this.MenuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuLoad,
+            this.MenuSave,
+            this.MenuExit});
+            this.MenuFile.Name = "MenuFile";
+            this.MenuFile.Size = new System.Drawing.Size(48, 20);
+            this.MenuFile.Text = "Файл";
             // 
-            // menuLoad
+            // MenuLoad
             // 
-            this.menuLoad.Image = global::EmployeeList_2._0.Properties.Resources.folder_open;
-            this.menuLoad.Name = "menuLoad";
-            this.menuLoad.Size = new System.Drawing.Size(180, 22);
-            this.menuLoad.Text = "Загрузить";
-            this.menuLoad.Click += new System.EventHandler(this.toolStripMenuLoad_Click);
+            this.MenuLoad.Image = global::EmployeeList_2._0.Properties.Resources.folder_open;
+            this.MenuLoad.Name = "MenuLoad";
+            this.MenuLoad.Size = new System.Drawing.Size(132, 22);
+            this.MenuLoad.Text = "Загрузить";
+            this.MenuLoad.Click += new System.EventHandler(this.ToolStripMenuLoad_Click);
             // 
-            // menuSave
+            // MenuSave
             // 
-            this.menuSave.Image = global::EmployeeList_2._0.Properties.Resources.Save256;
-            this.menuSave.Name = "menuSave";
-            this.menuSave.Size = new System.Drawing.Size(180, 22);
-            this.menuSave.Text = "Сохранить";
-            this.menuSave.Click += new System.EventHandler(this.toolStripMenuSave_Click);
+            this.MenuSave.Image = global::EmployeeList_2._0.Properties.Resources.Save256;
+            this.MenuSave.Name = "MenuSave";
+            this.MenuSave.Size = new System.Drawing.Size(132, 22);
+            this.MenuSave.Text = "Сохранить";
+            this.MenuSave.Click += new System.EventHandler(this.ToolStripMenuSave_Click);
             // 
-            // menuExit
+            // MenuExit
             // 
-            this.menuExit.Name = "menuExit";
-            this.menuExit.Size = new System.Drawing.Size(180, 22);
-            this.menuExit.Text = "Выход";
-            this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
+            this.MenuExit.Name = "MenuExit";
+            this.MenuExit.Size = new System.Drawing.Size(132, 22);
+            this.MenuExit.Text = "Выход";
+            this.MenuExit.Click += new System.EventHandler(this.MenuExit_Click);
             // 
-            // menuDepartmens
+            // MenuDepartmens
             // 
-            this.menuDepartmens.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuAddDep,
-            this.menuChangeDep});
-            this.menuDepartmens.Name = "menuDepartmens";
-            this.menuDepartmens.Size = new System.Drawing.Size(61, 20);
-            this.menuDepartmens.Text = "Отделы";
+            this.MenuDepartmens.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuAddDep,
+            this.MenuChangeDep,
+            this.MenuRemoveDep});
+            this.MenuDepartmens.Name = "MenuDepartmens";
+            this.MenuDepartmens.Size = new System.Drawing.Size(61, 20);
+            this.MenuDepartmens.Text = "Отделы";
             // 
-            // menuAddDep
+            // MenuAddDep
             // 
-            this.menuAddDep.Image = global::EmployeeList_2._0.Properties.Resources.add;
-            this.menuAddDep.Name = "menuAddDep";
-            this.menuAddDep.Size = new System.Drawing.Size(180, 22);
-            this.menuAddDep.Text = "Добавить";
-            this.menuAddDep.Click += new System.EventHandler(this.menuAddDep_Click);
+            this.MenuAddDep.Image = global::EmployeeList_2._0.Properties.Resources.add;
+            this.MenuAddDep.Name = "MenuAddDep";
+            this.MenuAddDep.Size = new System.Drawing.Size(128, 22);
+            this.MenuAddDep.Text = "Добавить";
+            this.MenuAddDep.Click += new System.EventHandler(this.MenuAddDep_Click);
             // 
-            // menuChangeDep
+            // MenuChangeDep
             // 
-            this.menuChangeDep.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuChangeDepByData});
-            this.menuChangeDep.Name = "menuChangeDep";
-            this.menuChangeDep.Size = new System.Drawing.Size(180, 22);
-            this.menuChangeDep.Text = "Изменить";
+            this.MenuChangeDep.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuChangeDepByData});
+            this.MenuChangeDep.Name = "MenuChangeDep";
+            this.MenuChangeDep.Size = new System.Drawing.Size(128, 22);
+            this.MenuChangeDep.Text = "Изменить";
             // 
-            // menuChangeDepByData
+            // MenuChangeDepByData
             // 
-            this.menuChangeDepByData.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.menuChangeDepByData.Name = "menuChangeDepByData";
-            this.menuChangeDepByData.Size = new System.Drawing.Size(180, 22);
-            this.menuChangeDepByData.Text = "По данным";
-            this.menuChangeDepByData.Click += new System.EventHandler(this.menuChangeDepByData_Click);
+            this.MenuChangeDepByData.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.MenuChangeDepByData.Name = "MenuChangeDepByData";
+            this.MenuChangeDepByData.Size = new System.Drawing.Size(137, 22);
+            this.MenuChangeDepByData.Text = "По данным";
+            this.MenuChangeDepByData.Click += new System.EventHandler(this.MenuChangeDepByData_Click);
             // 
-            // dataGridDeps
+            // MenuRemoveDep
             // 
-            this.dataGridDeps.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridDeps.Location = new System.Drawing.Point(12, 113);
-            this.dataGridDeps.Name = "dataGridDeps";
-            this.dataGridDeps.Size = new System.Drawing.Size(462, 343);
-            this.dataGridDeps.TabIndex = 1;
+            this.MenuRemoveDep.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuRemDepByData});
+            this.MenuRemoveDep.Name = "MenuRemoveDep";
+            this.MenuRemoveDep.Size = new System.Drawing.Size(128, 22);
+            this.MenuRemoveDep.Text = "Удалить";
             // 
-            // toolStrip1
+            // menuRemDepByData
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolButtonLoad,
-            this.toolButtonSave,
-            this.toolStripSeparator1,
-            this.toolButtonAddDep});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(588, 25);
-            this.toolStrip1.TabIndex = 2;
-            this.toolStrip1.Text = "toolStrip1";
+            this.menuRemDepByData.Name = "menuRemDepByData";
+            this.menuRemDepByData.Size = new System.Drawing.Size(137, 22);
+            this.menuRemDepByData.Text = "По данным";
+            this.menuRemDepByData.Click += new System.EventHandler(this.MenuRemDepByData_Click);
             // 
-            // toolButtonLoad
+            // MenuEmployers
             // 
-            this.toolButtonLoad.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolButtonLoad.Image = global::EmployeeList_2._0.Properties.Resources.folder_open;
-            this.toolButtonLoad.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolButtonLoad.Name = "toolButtonLoad";
-            this.toolButtonLoad.Size = new System.Drawing.Size(23, 22);
-            this.toolButtonLoad.Text = "Загрузить";
-            this.toolButtonLoad.Click += new System.EventHandler(this.toolButtonLoad_Click);
+            this.MenuEmployers.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuAddEmp,
+            this.MenuChangeEmp,
+            this.MenuRemoveEmp});
+            this.MenuEmployers.Name = "MenuEmployers";
+            this.MenuEmployers.Size = new System.Drawing.Size(85, 20);
+            this.MenuEmployers.Text = "Сотрудники";
             // 
-            // toolButtonSave
+            // MenuAddEmp
             // 
-            this.toolButtonSave.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolButtonSave.Image = global::EmployeeList_2._0.Properties.Resources.Save256;
-            this.toolButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolButtonSave.Name = "toolButtonSave";
-            this.toolButtonSave.Size = new System.Drawing.Size(23, 22);
-            this.toolButtonSave.Text = "Сохранить";
-            this.toolButtonSave.Click += new System.EventHandler(this.toolButtonSave_Click);
+            this.MenuAddEmp.Name = "MenuAddEmp";
+            this.MenuAddEmp.Size = new System.Drawing.Size(128, 22);
+            this.MenuAddEmp.Text = "Добавить";
+            this.MenuAddEmp.Click += new System.EventHandler(this.MenuAddEmp_Click);
             // 
-            // toolStripSeparator1
+            // MenuChangeEmp
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.MenuChangeEmp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuChangeEmpByData});
+            this.MenuChangeEmp.Name = "MenuChangeEmp";
+            this.MenuChangeEmp.Size = new System.Drawing.Size(128, 22);
+            this.MenuChangeEmp.Text = "Изменить";
             // 
-            // toolButtonAddDep
+            // MenuChangeEmpByData
             // 
-            this.toolButtonAddDep.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolButtonAddDep.Image = global::EmployeeList_2._0.Properties.Resources.add;
-            this.toolButtonAddDep.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolButtonAddDep.Name = "toolButtonAddDep";
-            this.toolButtonAddDep.Size = new System.Drawing.Size(23, 22);
-            this.toolButtonAddDep.Text = "Добавить отдел";
-            this.toolButtonAddDep.Click += new System.EventHandler(this.toolButtonAddDep_Click);
+            this.MenuChangeEmpByData.Name = "MenuChangeEmpByData";
+            this.MenuChangeEmpByData.Size = new System.Drawing.Size(137, 22);
+            this.MenuChangeEmpByData.Text = "По данным";
+            this.MenuChangeEmpByData.Click += new System.EventHandler(this.MenuChangeEmpByData_Click);
+            // 
+            // MenuRemoveEmp
+            // 
+            this.MenuRemoveEmp.Name = "MenuRemoveEmp";
+            this.MenuRemoveEmp.Size = new System.Drawing.Size(128, 22);
+            this.MenuRemoveEmp.Text = "Удалить";
+            this.MenuRemoveEmp.Click += new System.EventHandler(this.MenuRemoveEmp_Click);
+            // 
+            // DataGridDeps
+            // 
+            this.DataGridDeps.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataGridDeps.Location = new System.Drawing.Point(20, 171);
+            this.DataGridDeps.Name = "DataGridDeps";
+            this.DataGridDeps.Size = new System.Drawing.Size(310, 310);
+            this.DataGridDeps.TabIndex = 1;
+            // 
+            // ToolStrip1
+            // 
+            this.ToolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CountOfEmpPerDep});
+            this.ToolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.ToolStrip1.Name = "ToolStrip1";
+            this.ToolStrip1.Size = new System.Drawing.Size(1008, 25);
+            this.ToolStrip1.TabIndex = 2;
+            this.ToolStrip1.Text = "toolStrip1";
+            // 
+            // CountOfEmpPerDep
+            // 
+            this.CountOfEmpPerDep.Image = global::EmployeeList_2._0.Properties.Resources.icons8;
+            this.CountOfEmpPerDep.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.CountOfEmpPerDep.Name = "CountOfEmpPerDep";
+            this.CountOfEmpPerDep.Size = new System.Drawing.Size(184, 22);
+            this.CountOfEmpPerDep.Text = "Кол-во сотр-ков по отделам";
+            this.CountOfEmpPerDep.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.CountOfEmpPerDep.Click += new System.EventHandler(this.CountOfEmpPerDep_Click);
+            // 
+            // DataGridEmps
+            // 
+            this.DataGridEmps.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataGridEmps.Location = new System.Drawing.Point(21, 171);
+            this.DataGridEmps.Name = "DataGridEmps";
+            this.DataGridEmps.Size = new System.Drawing.Size(582, 310);
+            this.DataGridEmps.TabIndex = 3;
+            // 
+            // LabelNameOfTableEmp
+            // 
+            this.LabelNameOfTableEmp.AutoSize = true;
+            this.LabelNameOfTableEmp.Location = new System.Drawing.Point(18, 9);
+            this.LabelNameOfTableEmp.Name = "LabelNameOfTableEmp";
+            this.LabelNameOfTableEmp.Size = new System.Drawing.Size(76, 13);
+            this.LabelNameOfTableEmp.TabIndex = 5;
+            this.LabelNameOfTableEmp.Text = "\"Сотрудники\"";
+            // 
+            // LabelNameOfTableDep
+            // 
+            this.LabelNameOfTableDep.AutoSize = true;
+            this.LabelNameOfTableDep.Location = new System.Drawing.Point(17, 9);
+            this.LabelNameOfTableDep.Name = "LabelNameOfTableDep";
+            this.LabelNameOfTableDep.Size = new System.Drawing.Size(56, 13);
+            this.LabelNameOfTableDep.TabIndex = 4;
+            this.LabelNameOfTableDep.Text = "\"Отделы\"";
+            // 
+            // PanelDeps
+            // 
+            this.PanelDeps.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PanelDeps.Controls.Add(this.DepartmentInfo);
+            this.PanelDeps.Controls.Add(this.LabelNameOfTableDep);
+            this.PanelDeps.Controls.Add(this.DataGridDeps);
+            this.PanelDeps.Location = new System.Drawing.Point(12, 52);
+            this.PanelDeps.Name = "PanelDeps";
+            this.PanelDeps.Size = new System.Drawing.Size(351, 497);
+            this.PanelDeps.TabIndex = 6;
+            // 
+            // DepartmentInfo
+            // 
+            this.DepartmentInfo.Controls.Add(this.ComboBoxDeps);
+            this.DepartmentInfo.Controls.Add(this.CountOfDepEmp);
+            this.DepartmentInfo.Controls.Add(this.SumOfDepSalary);
+            this.DepartmentInfo.Controls.Add(this.AvgOfDepSalary);
+            this.DepartmentInfo.Location = new System.Drawing.Point(20, 38);
+            this.DepartmentInfo.Name = "DepartmentInfo";
+            this.DepartmentInfo.Size = new System.Drawing.Size(310, 121);
+            this.DepartmentInfo.TabIndex = 9;
+            this.DepartmentInfo.TabStop = false;
+            this.DepartmentInfo.Text = "Сведения об отделе";
+            // 
+            // ComboBoxDeps
+            // 
+            this.ComboBoxDeps.FormattingEnabled = true;
+            this.ComboBoxDeps.Location = new System.Drawing.Point(6, 19);
+            this.ComboBoxDeps.Name = "ComboBoxDeps";
+            this.ComboBoxDeps.Size = new System.Drawing.Size(121, 21);
+            this.ComboBoxDeps.TabIndex = 5;
+            this.ComboBoxDeps.SelectedIndexChanged += new System.EventHandler(this.ComboBoxDeps_SelectedIndexChanged);
+            // 
+            // CountOfDepEmp
+            // 
+            this.CountOfDepEmp.AutoSize = true;
+            this.CountOfDepEmp.Location = new System.Drawing.Point(3, 103);
+            this.CountOfDepEmp.Name = "CountOfDepEmp";
+            this.CountOfDepEmp.Size = new System.Drawing.Size(87, 13);
+            this.CountOfDepEmp.TabIndex = 8;
+            this.CountOfDepEmp.Text = "CountOfDepEmp";
+            // 
+            // SumOfDepSalary
+            // 
+            this.SumOfDepSalary.AutoSize = true;
+            this.SumOfDepSalary.Location = new System.Drawing.Point(3, 54);
+            this.SumOfDepSalary.Name = "SumOfDepSalary";
+            this.SumOfDepSalary.Size = new System.Drawing.Size(88, 13);
+            this.SumOfDepSalary.TabIndex = 6;
+            this.SumOfDepSalary.Text = "SumOfDepSalary";
+            // 
+            // AvgOfDepSalary
+            // 
+            this.AvgOfDepSalary.AutoSize = true;
+            this.AvgOfDepSalary.Location = new System.Drawing.Point(3, 78);
+            this.AvgOfDepSalary.Name = "AvgOfDepSalary";
+            this.AvgOfDepSalary.Size = new System.Drawing.Size(86, 13);
+            this.AvgOfDepSalary.TabIndex = 7;
+            this.AvgOfDepSalary.Text = "AvgOfDepSalary";
+            // 
+            // PanelEmps
+            // 
+            this.PanelEmps.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.PanelEmps.Controls.Add(this.TotalInfo);
+            this.PanelEmps.Controls.Add(this.LabelNameOfTableEmp);
+            this.PanelEmps.Controls.Add(this.DataGridEmps);
+            this.PanelEmps.Location = new System.Drawing.Point(369, 52);
+            this.PanelEmps.Name = "PanelEmps";
+            this.PanelEmps.Size = new System.Drawing.Size(627, 497);
+            this.PanelEmps.TabIndex = 7;
+            // 
+            // TotalInfo
+            // 
+            this.TotalInfo.Controls.Add(this.SumSalary);
+            this.TotalInfo.Controls.Add(this.CountOfEmp);
+            this.TotalInfo.Controls.Add(this.AvgSalary);
+            this.TotalInfo.Location = new System.Drawing.Point(21, 38);
+            this.TotalInfo.Name = "TotalInfo";
+            this.TotalInfo.Size = new System.Drawing.Size(582, 43);
+            this.TotalInfo.TabIndex = 11;
+            this.TotalInfo.TabStop = false;
+            this.TotalInfo.Text = "Информация";
+            // 
+            // SumSalary
+            // 
+            this.SumSalary.AutoSize = true;
+            this.SumSalary.Location = new System.Drawing.Point(6, 19);
+            this.SumSalary.Name = "SumSalary";
+            this.SumSalary.Size = new System.Drawing.Size(57, 13);
+            this.SumSalary.TabIndex = 7;
+            this.SumSalary.Text = "SumSalary";
+            // 
+            // CountOfEmp
+            // 
+            this.CountOfEmp.AutoSize = true;
+            this.CountOfEmp.Location = new System.Drawing.Point(384, 19);
+            this.CountOfEmp.Name = "CountOfEmp";
+            this.CountOfEmp.Size = new System.Drawing.Size(67, 13);
+            this.CountOfEmp.TabIndex = 10;
+            this.CountOfEmp.Text = "CountOfEmp";
+            // 
+            // AvgSalary
+            // 
+            this.AvgSalary.AutoSize = true;
+            this.AvgSalary.Location = new System.Drawing.Point(204, 19);
+            this.AvgSalary.Name = "AvgSalary";
+            this.AvgSalary.Size = new System.Drawing.Size(55, 13);
+            this.AvgSalary.TabIndex = 9;
+            this.AvgSalary.Text = "AvgSalary";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(588, 492);
-            this.Controls.Add(this.toolStrip1);
-            this.Controls.Add(this.dataGridDeps);
-            this.Controls.Add(this.menuStrip1);
+            this.ClientSize = new System.Drawing.Size(1008, 561);
+            this.Controls.Add(this.PanelEmps);
+            this.Controls.Add(this.PanelDeps);
+            this.Controls.Add(this.ToolStrip1);
+            this.Controls.Add(this.MenuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "EmployeeList 2.0 [прототип]";
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridDeps)).EndInit();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.MenuStrip1.ResumeLayout(false);
+            this.MenuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridDeps)).EndInit();
+            this.ToolStrip1.ResumeLayout(false);
+            this.ToolStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridEmps)).EndInit();
+            this.PanelDeps.ResumeLayout(false);
+            this.PanelDeps.PerformLayout();
+            this.DepartmentInfo.ResumeLayout(false);
+            this.DepartmentInfo.PerformLayout();
+            this.PanelEmps.ResumeLayout(false);
+            this.PanelEmps.PerformLayout();
+            this.TotalInfo.ResumeLayout(false);
+            this.TotalInfo.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -209,21 +406,39 @@
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem menuFile;
-        private System.Windows.Forms.ToolStripMenuItem menuLoad;
-        private System.Windows.Forms.ToolStripMenuItem menuSave;
-        private System.Windows.Forms.ToolStripMenuItem menuExit;
-        private System.Windows.Forms.ToolStripMenuItem menuDepartmens;
-        private System.Windows.Forms.ToolStripMenuItem menuAddDep;
-        private System.Windows.Forms.DataGridView dataGridDeps;
-        private System.Windows.Forms.ToolStripMenuItem menuChangeDep;
-        private System.Windows.Forms.ToolStripMenuItem menuChangeDepByData;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton toolButtonLoad;
-        private System.Windows.Forms.ToolStripButton toolButtonSave;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripButton toolButtonAddDep;
+        private System.Windows.Forms.MenuStrip MenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem MenuFile;
+        private System.Windows.Forms.ToolStripMenuItem MenuLoad;
+        private System.Windows.Forms.ToolStripMenuItem MenuSave;
+        private System.Windows.Forms.ToolStripMenuItem MenuExit;
+        private System.Windows.Forms.ToolStripMenuItem MenuDepartmens;
+        private System.Windows.Forms.ToolStripMenuItem MenuAddDep;
+        private System.Windows.Forms.DataGridView DataGridDeps;
+        private System.Windows.Forms.ToolStripMenuItem MenuChangeDep;
+        private System.Windows.Forms.ToolStripMenuItem MenuChangeDepByData;
+        private System.Windows.Forms.ToolStrip ToolStrip1;
+        private System.Windows.Forms.ToolStripMenuItem MenuRemoveDep;
+        private System.Windows.Forms.ToolStripMenuItem menuRemDepByData;
+        private System.Windows.Forms.DataGridView DataGridEmps;
+        private System.Windows.Forms.Label LabelNameOfTableEmp;
+        private System.Windows.Forms.Label LabelNameOfTableDep;
+        private System.Windows.Forms.Panel PanelDeps;
+        private System.Windows.Forms.Panel PanelEmps;
+        private System.Windows.Forms.ToolStripMenuItem MenuEmployers;
+        private System.Windows.Forms.ToolStripMenuItem MenuAddEmp;
+        private System.Windows.Forms.ToolStripMenuItem MenuChangeEmp;
+        private System.Windows.Forms.ToolStripMenuItem MenuChangeEmpByData;
+        private System.Windows.Forms.ToolStripMenuItem MenuRemoveEmp;
+        private System.Windows.Forms.Label SumSalary;
+        private System.Windows.Forms.Label AvgSalary;
+        private System.Windows.Forms.Label CountOfEmp;
+        private System.Windows.Forms.ComboBox ComboBoxDeps;
+        private System.Windows.Forms.Label SumOfDepSalary;
+        private System.Windows.Forms.Label AvgOfDepSalary;
+        private System.Windows.Forms.Label CountOfDepEmp;
+        private System.Windows.Forms.ToolStripButton CountOfEmpPerDep;
+        private System.Windows.Forms.GroupBox TotalInfo;
+        private System.Windows.Forms.GroupBox DepartmentInfo;
     }
 }
 

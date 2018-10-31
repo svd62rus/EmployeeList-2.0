@@ -28,27 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelDepName = new System.Windows.Forms.Label();
-            this.textBoxDepName = new System.Windows.Forms.TextBox();
+            this.LabelDepName = new System.Windows.Forms.Label();
+            this.TextBoxDepName = new System.Windows.Forms.TextBox();
             this.buttonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // labelDepName
+            // LabelDepName
             // 
-            this.labelDepName.AutoSize = true;
-            this.labelDepName.Location = new System.Drawing.Point(12, 26);
-            this.labelDepName.Name = "labelDepName";
-            this.labelDepName.Size = new System.Drawing.Size(95, 13);
-            this.labelDepName.TabIndex = 0;
-            this.labelDepName.Text = "Название отдела";
+            this.LabelDepName.AutoSize = true;
+            this.LabelDepName.Location = new System.Drawing.Point(12, 26);
+            this.LabelDepName.Name = "LabelDepName";
+            this.LabelDepName.Size = new System.Drawing.Size(95, 13);
+            this.LabelDepName.TabIndex = 0;
+            this.LabelDepName.Text = "Название отдела";
             // 
-            // textBoxDepName
+            // TextBoxDepName
             // 
-            this.textBoxDepName.Location = new System.Drawing.Point(15, 61);
-            this.textBoxDepName.Name = "textBoxDepName";
-            this.textBoxDepName.Size = new System.Drawing.Size(184, 20);
-            this.textBoxDepName.TabIndex = 1;
+            this.TextBoxDepName.Location = new System.Drawing.Point(15, 61);
+            this.TextBoxDepName.Name = "TextBoxDepName";
+            this.TextBoxDepName.Size = new System.Drawing.Size(184, 20);
+            this.TextBoxDepName.TabIndex = 1;
             // 
             // buttonOK
             // 
@@ -77,8 +77,8 @@
             this.ClientSize = new System.Drawing.Size(216, 158);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOK);
-            this.Controls.Add(this.textBoxDepName);
-            this.Controls.Add(this.labelDepName);
+            this.Controls.Add(this.TextBoxDepName);
+            this.Controls.Add(this.LabelDepName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -91,8 +91,8 @@
 
         #endregion
 
-        private System.Windows.Forms.Label labelDepName;
-        private System.Windows.Forms.TextBox textBoxDepName;
+        private System.Windows.Forms.Label LabelDepName;
+        private System.Windows.Forms.TextBox TextBoxDepName;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
     }
