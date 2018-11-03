@@ -311,5 +311,13 @@ namespace EmployeeList_2._0
 
             return false;
         }
+        //Проверка на ввод корректной величины зарплаты
+        private void TextBoxSalary_TextChanged(object sender, EventArgs e)
+        {
+            if (TextBoxSalary.Text.Length > Program.digitInSalary)
+                ButtonOK.Enabled = false;
+            else
+                ButtonOK.Enabled = true;
+        }
     }
 }

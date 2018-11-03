@@ -12,6 +12,7 @@ namespace EmployeeList_2._0
     {
         public enum Действия {Добавить, Изменить, Удалить};
         public enum ФИО {Фамилия, Имя, Отчество};
+        public const ushort digitInSalary = 7; 
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

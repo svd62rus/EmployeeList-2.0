@@ -37,13 +37,10 @@
             this.MenuDepartmens = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuAddDep = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuChangeDep = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuChangeDepByData = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuRemoveDep = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuRemDepByData = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuEmployers = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuAddEmp = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuChangeEmp = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuChangeEmpByData = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuRemoveEmp = new System.Windows.Forms.ToolStripMenuItem();
             this.DataGridDeps = new System.Windows.Forms.DataGridView();
             this.ToolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -137,34 +134,18 @@
             // 
             // MenuChangeDep
             // 
-            this.MenuChangeDep.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuChangeDepByData});
+            this.MenuChangeDep.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.MenuChangeDep.Name = "MenuChangeDep";
             this.MenuChangeDep.Size = new System.Drawing.Size(128, 22);
             this.MenuChangeDep.Text = "Изменить";
-            // 
-            // MenuChangeDepByData
-            // 
-            this.MenuChangeDepByData.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.MenuChangeDepByData.Name = "MenuChangeDepByData";
-            this.MenuChangeDepByData.Size = new System.Drawing.Size(137, 22);
-            this.MenuChangeDepByData.Text = "По данным";
-            this.MenuChangeDepByData.Click += new System.EventHandler(this.MenuChangeDepByData_Click);
+            this.MenuChangeDep.Click += new System.EventHandler(this.MenuChangeDep_Click);
             // 
             // MenuRemoveDep
             // 
-            this.MenuRemoveDep.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuRemDepByData});
             this.MenuRemoveDep.Name = "MenuRemoveDep";
             this.MenuRemoveDep.Size = new System.Drawing.Size(128, 22);
             this.MenuRemoveDep.Text = "Удалить";
-            // 
-            // menuRemDepByData
-            // 
-            this.menuRemDepByData.Name = "menuRemDepByData";
-            this.menuRemDepByData.Size = new System.Drawing.Size(137, 22);
-            this.menuRemDepByData.Text = "По данным";
-            this.menuRemDepByData.Click += new System.EventHandler(this.MenuRemDepByData_Click);
+            this.MenuRemoveDep.Click += new System.EventHandler(this.MenuRemoveDep_Click);
             // 
             // MenuEmployers
             // 
@@ -178,6 +159,7 @@
             // 
             // MenuAddEmp
             // 
+            this.MenuAddEmp.Image = global::EmployeeList_2._0.Properties.Resources.add;
             this.MenuAddEmp.Name = "MenuAddEmp";
             this.MenuAddEmp.Size = new System.Drawing.Size(128, 22);
             this.MenuAddEmp.Text = "Добавить";
@@ -185,18 +167,10 @@
             // 
             // MenuChangeEmp
             // 
-            this.MenuChangeEmp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuChangeEmpByData});
             this.MenuChangeEmp.Name = "MenuChangeEmp";
             this.MenuChangeEmp.Size = new System.Drawing.Size(128, 22);
             this.MenuChangeEmp.Text = "Изменить";
-            // 
-            // MenuChangeEmpByData
-            // 
-            this.MenuChangeEmpByData.Name = "MenuChangeEmpByData";
-            this.MenuChangeEmpByData.Size = new System.Drawing.Size(137, 22);
-            this.MenuChangeEmpByData.Text = "По данным";
-            this.MenuChangeEmpByData.Click += new System.EventHandler(this.MenuChangeEmpByData_Click);
+            this.MenuChangeEmp.Click += new System.EventHandler(this.MenuChangeEmp_Click);
             // 
             // MenuRemoveEmp
             // 
@@ -354,7 +328,7 @@
             // CountOfEmp
             // 
             this.CountOfEmp.AutoSize = true;
-            this.CountOfEmp.Location = new System.Drawing.Point(384, 19);
+            this.CountOfEmp.Location = new System.Drawing.Point(422, 19);
             this.CountOfEmp.Name = "CountOfEmp";
             this.CountOfEmp.Size = new System.Drawing.Size(67, 13);
             this.CountOfEmp.TabIndex = 10;
@@ -363,7 +337,7 @@
             // AvgSalary
             // 
             this.AvgSalary.AutoSize = true;
-            this.AvgSalary.Location = new System.Drawing.Point(204, 19);
+            this.AvgSalary.Location = new System.Drawing.Point(214, 19);
             this.AvgSalary.Name = "AvgSalary";
             this.AvgSalary.Size = new System.Drawing.Size(55, 13);
             this.AvgSalary.TabIndex = 9;
@@ -384,7 +358,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "EmployeeList 2.0 [прототип]";
+            this.Text = "EmployeeList 2.0.2";
             this.MenuStrip1.ResumeLayout(false);
             this.MenuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridDeps)).EndInit();
@@ -414,11 +388,7 @@
         private System.Windows.Forms.ToolStripMenuItem MenuDepartmens;
         private System.Windows.Forms.ToolStripMenuItem MenuAddDep;
         private System.Windows.Forms.DataGridView DataGridDeps;
-        private System.Windows.Forms.ToolStripMenuItem MenuChangeDep;
-        private System.Windows.Forms.ToolStripMenuItem MenuChangeDepByData;
         private System.Windows.Forms.ToolStrip ToolStrip1;
-        private System.Windows.Forms.ToolStripMenuItem MenuRemoveDep;
-        private System.Windows.Forms.ToolStripMenuItem menuRemDepByData;
         private System.Windows.Forms.DataGridView DataGridEmps;
         private System.Windows.Forms.Label LabelNameOfTableEmp;
         private System.Windows.Forms.Label LabelNameOfTableDep;
@@ -426,8 +396,6 @@
         private System.Windows.Forms.Panel PanelEmps;
         private System.Windows.Forms.ToolStripMenuItem MenuEmployers;
         private System.Windows.Forms.ToolStripMenuItem MenuAddEmp;
-        private System.Windows.Forms.ToolStripMenuItem MenuChangeEmp;
-        private System.Windows.Forms.ToolStripMenuItem MenuChangeEmpByData;
         private System.Windows.Forms.ToolStripMenuItem MenuRemoveEmp;
         private System.Windows.Forms.Label SumSalary;
         private System.Windows.Forms.Label AvgSalary;
@@ -439,6 +407,9 @@
         private System.Windows.Forms.ToolStripButton CountOfEmpPerDep;
         private System.Windows.Forms.GroupBox TotalInfo;
         private System.Windows.Forms.GroupBox DepartmentInfo;
+        private System.Windows.Forms.ToolStripMenuItem MenuChangeDep;
+        private System.Windows.Forms.ToolStripMenuItem MenuRemoveDep;
+        private System.Windows.Forms.ToolStripMenuItem MenuChangeEmp;
     }
 }
 

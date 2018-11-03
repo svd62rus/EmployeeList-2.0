@@ -123,6 +123,7 @@
             this.TextBoxSalary.Name = "TextBoxSalary";
             this.TextBoxSalary.Size = new System.Drawing.Size(121, 20);
             this.TextBoxSalary.TabIndex = 9;
+            this.TextBoxSalary.TextChanged += new System.EventHandler(this.TextBoxSalary_TextChanged);
             // 
             // ButtonOK
             // 

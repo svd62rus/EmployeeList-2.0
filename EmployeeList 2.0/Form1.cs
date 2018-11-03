@@ -10,84 +10,65 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace EmployeeList_2._0
 {
     public partial class Form1 : Form
     {
-        private EmployeeList list; //лист таблиц
+        private EmployeeList list; //лист
 
-        private const string _emptyDepField = "[не выбрано]"; //пустое поле комбобокса с отделами
+        private const string _emptyDepField = "[не выбрано]"; //пустое поле комбобокса отделов на главной форме
+
+        //Подписи инфо-лейблов на главной форме
         private string sumOfSalaryTitle = "Общая зарплата: ";
         private string avgOfSalaryTitle = "Средняя зарплата: ";
-        private string countOfEmpTitle = "Кол-во сотрудников: ";
+        private string countOfEmpTitle = "Cотрудники: ";
         private string sumOfDepSalaryTitle = "Общая зарплата по отделу: ";
         private string avgOfDepSalaryTitle = "Сред.зарплата по отделу: ";
         private string countOfDepEmpTitle = "Кол-во сотрудников в отделе: ";
+        private string сurrency = "р.";
         private string noDataString = "нет данных";
 
+        //Окончания слов
+        private string endingMany = "ов";
+        private string endingSingle = "а";
+        
+        //Регулярки для задания окончаний
+        Regex regexMany = new Regex(@"^\d*(1\d|0)$");  //проверка на цифру, после которой у слова будет окончание "ов"
+        Regex regexSingle = new Regex(@"^\d*[2,3,4]$"); //-//- окончание "а"
 
-        private string endingOne = "ов";
-        private string endingTwo = "а";
-
-        Regex regex1 = new Regex(@"^\d*(1\d|0)$");
-        Regex regex2 = new Regex(@"^\d*[2,3,4]$");
-
-        static private string nameOfFile = "List.dat";
+        static private string nameOfFile = "List.dat"; //имя сохраняемого файла
 
         public delegate void DisplayMethod<T>(DataGridView dataGrid, List<T> displayList); /*делегат для:
                                              - передачи метода вывода данных в таблицы
                                             */
-
         public Form1()
         {
             InitializeComponent();
 
             list = new EmployeeList(); //cоздаем экземпляр таблиц
+            DataGridAddColumns(); //добавляем столбцы
+            SetDataGridParams(DataGridDeps); //устанавливаем параметры датагрида отделов           
+            SetDataGridParams(DataGridEmps); //устанавливаем параметры датагрида сотрудников
+            SetInfoLabelText(); //устанавливаем дефолтный текст в инфо-лейблах
+            ComboBoxDeps.DropDownStyle = ComboBoxStyle.DropDownList; //делаем комбобокс нередактируемым
+        }
 
-            //добавляем столбцы в датагрид отделов
+        //Добавление столбцов
+        private void DataGridAddColumns()
+        {
+            //Добавляем столбцы в датагрид отделов
             DataGridDeps.Columns.Add("Id", "№");
             DataGridDeps.Columns.Add("Name", "Отдел");
             DataGridDeps.Columns.Add("DateCreate", "Дата создания");
-            SetDataGridParams(DataGridDeps); //устанавливаем параметры датагрида отделов
-
-            //добавляем столбцы в датагрид сотрудников
+            //Добавляем столбцы в датагрид сотрудников
             DataGridEmps.Columns.Add("Id", "№");
             DataGridEmps.Columns.Add("FullName", "ФИО");
-            DataGridEmps.Columns.Add("Salary", "Зарплата");
+            DataGridEmps.Columns.Add("Salary", "Зарплата, "+ сurrency);
             DataGridEmps.Columns.Add("Department", "Отдел");
             DataGridEmps.Columns.Add("DateHired", "Нанят");
             DataGridEmps.Columns.Add("DateFired", "Уволен");
-            SetDataGridParams(DataGridEmps); //устанавливаем параметры датагрида сотрудников
-
-            SumSalary.Text = sumOfSalaryTitle + noDataString;
-            AvgSalary.Text = avgOfSalaryTitle + noDataString;
-            CountOfEmp.Text = countOfEmpTitle + noDataString;
-            SumOfDepSalary.Text = sumOfDepSalaryTitle + noDataString;
-            AvgOfDepSalary.Text = avgOfDepSalaryTitle + noDataString;
-            CountOfDepEmp.Text = countOfDepEmpTitle + noDataString;
-            ComboBoxDeps.DropDownStyle = ComboBoxStyle.DropDownList; //делаем комбобокс нередактируемым
-        }
-        //Заполнение списка отдела для выбора
-        private void FillDepsList(List<EmpClasses.Department> depList)
-        {
-            int selectedIndex=0;
-            int count = ComboBoxDeps.Items.Count;
-            bool isCurrentItem = false;
-            if (count > 0)
-                selectedIndex = ComboBoxDeps.SelectedIndex;
-            ComboBoxDeps.Items.Clear();
-            ComboBoxDeps.Items.Add(_emptyDepField); //добавляем пункт по умолчанию
-            ComboBoxDeps.SelectedIndex = 0; //его индекс нулевой 
-            for (int i = 0; i < depList.Count; i++)
-            {
-                var currentIndex = ComboBoxDeps.Items.Add(depList[i].Id + ". " + depList[i].Name); //добавляем отдел в комбобокс
-                if (currentIndex == selectedIndex)
-                     isCurrentItem = true;
-            }
-            if (isCurrentItem)
-                if (count>0)
-                    ComboBoxDeps.SelectedIndex = selectedIndex;
         }
         //Установка параметров датагрида
         private void SetDataGridParams(DataGridView dataGrid)
@@ -97,6 +78,62 @@ namespace EmployeeList_2._0
             dataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGrid.MultiSelect = false;
 
+        }
+        //Установка дефолтного текста в инфо-лейблах
+        private void SetInfoLabelText()
+        {
+            SumSalary.Text = sumOfSalaryTitle + noDataString;
+            AvgSalary.Text = avgOfSalaryTitle + noDataString;
+            CountOfEmp.Text = countOfEmpTitle + noDataString;
+            SumOfDepSalary.Text = sumOfDepSalaryTitle + noDataString;
+            AvgOfDepSalary.Text = avgOfDepSalaryTitle + noDataString;
+            CountOfDepEmp.Text = countOfDepEmpTitle + noDataString;
+        }
+        //Заполнение комбобокса отделов
+        private void FillDepsList(List<EmpClasses.Department> depList)
+        {
+            int selectedIndex = 0;
+            int count = ComboBoxDeps.Items.Count;
+            bool isCurrentItem = false; //обновляется ли текущий выбранный отдел
+            if (count > 0)
+                selectedIndex = ComboBoxDeps.SelectedIndex;
+            AddDefaultSelect(); //добавляем пустое поле по умолчанию
+            for (int i = 0; i < depList.Count; i++)
+            {
+                var currentIndex = ComboBoxDeps.Items.Add(depList[i].Id + ". " + depList[i].Name); //добавляем отдел в комбобокс
+                if (currentIndex == selectedIndex)
+                    isCurrentItem = true;
+            }
+            if (isCurrentItem)
+                if (count > 0)
+                    ComboBoxDeps.SelectedIndex = selectedIndex; //оставляем текущий выбранным
+        }
+        //Добавление пункта по-умолчанию в список отделов
+        private void AddDefaultSelect()
+        {
+            ComboBoxDeps.Items.Clear();
+            ComboBoxDeps.Items.Add(_emptyDepField); //добавляем пункт по умолчанию
+            ComboBoxDeps.SelectedIndex = 0; //его индекс нулевой 
+        }
+          
+        //Обновление датагрида отделов
+        public void RefreshMainForm(DataGridView dataGrid, List<EmpClasses.Department> displayList)
+        {
+            Display(dataGrid, displayList);
+            FillDepsList(list.Departments);
+        }
+        //Обновление датагрида сотрудников
+        public void RefreshMainForm(DataGridView dataGrid, List<EmpClasses.Employee> displayList)
+        {
+            Display(dataGrid, displayList);
+            RefreshTotalInfo();
+            FillDepsList(list.Departments);
+        }
+        //Очистка датагрида
+        private void ClearDataGrid(DataGridView dataGrid)
+        {
+            if (dataGrid.Rows.Count > 1)
+                dataGrid.Rows.Clear(); //очищаем датагрид
         }
 
         //Вывод отделов
@@ -119,12 +156,6 @@ namespace EmployeeList_2._0
                     el.DateHired.ToLongDateString(),el.DateFired.ToString()};
                 dataGrid.Rows.Add(row); //добавляем массив строк в датагрид
             }
-        }
-        //Очистка датагрида
-        private void ClearDataGrid(DataGridView dataGrid)
-        {
-            if (dataGrid.Rows.Count > 1)
-                dataGrid.Rows.Clear(); //очищаем датагрид
         }
 
         //Файл-Загрузить
@@ -154,17 +185,15 @@ namespace EmployeeList_2._0
                     displayDeps(DataGridDeps, list.Departments); //выводим данные отделов в соответствующий датагрид
                     displayEmps(DataGridEmps, list.Employees); //выводим данные cотрудников в соответствующий датагрид
                 }  
-
             }
             catch (Exception ex)
             {
                 return ex;
             }
-            RefreshTotalInfo();
-            FillDepsList(list.Departments);
+            RefreshTotalInfo(); //обновляем общую инфу
+            FillDepsList(list.Departments); //заполняем список отделов
             return null;
         }
-
         //Файл-Сохранить
         private void ToolStripMenuSave_Click(object sender, EventArgs e)
         {
@@ -196,41 +225,19 @@ namespace EmployeeList_2._0
             return null;
         }
 
-        //Отделы-Добавить
-        private void MenuAddDep_Click(object sender, EventArgs e)
-        {
-            Enabled = false;
-            var formAddDep = new FormAddDep(list, this, DataGridDeps); //создаем форму добавления отдела
-            formAddDep.Show(); //показываем новую форму
-            formAddDep.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
-        }
-
         //Обработка закрытия дочерних форм
         private void AnyChildFormClosed(object sender, EventArgs e)
         {
             Enabled = true;
         }
-        //Обновление датагрида отделов
-        public void RefreshMainForm(DataGridView dataGrid, List<EmpClasses.Department> displayList)
-        {
-            Display(dataGrid, displayList);
-            FillDepsList(list.Departments);
-        }
-        //Обновление датагрида сотрудников
-        public void RefreshMainForm(DataGridView dataGrid, List<EmpClasses.Employee> displayList)
-        {
-            Display(dataGrid, displayList);
-            RefreshTotalInfo();
-            FillDepsList(list.Departments);
-        }
-
+        
         //Обновление общей информации
         public void RefreshTotalInfo()
         {
             if (list.Employees.Count > 0)
             {
-                SumSalary.Text = sumOfSalaryTitle + list.SumSalary().ToString();
-                AvgSalary.Text = avgOfSalaryTitle + list.AvgSalary().ToString();
+                SumSalary.Text = sumOfSalaryTitle + list.SumSalary().ToString("#.##") + " " + сurrency;
+                AvgSalary.Text = avgOfSalaryTitle + list.AvgSalary().ToString("#.##") + " " + сurrency;
                 CountOfEmp.Text = countOfEmpTitle + list.CountOfEmp().ToString();
             }
             else
@@ -250,32 +257,42 @@ namespace EmployeeList_2._0
             dataGrid.Update();
         }
 
-        //Выход
-        private void MenuExit_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        //Отделы-Изменить-По данным
-        private void MenuChangeDepByData_Click(object sender, EventArgs e)
-        {
-            ShowChildFormDep(Program.Действия.Изменить.ToString()); //вызываем дочернюю форму
-        }
-        //Отделы-Удалить-По данным
-        private void MenuRemDepByData_Click(object sender, EventArgs e)
-        {
-            ShowChildFormDep(Program.Действия.Удалить.ToString()); //вызываем дочернюю форму
-        }
-
         //Cоздание дочерней формы отделов и переключение на нее
         private void ShowChildFormDep(string operation)
         {
             Enabled = false;
-            var childForm = new FormChangeRemDep(list, this, DataGridDeps, DataGridEmps, operation); //создаем форму изменения отдела
+            var childForm = new FormChangeRemDep(list, this, DataGridDeps, DataGridEmps, operation); //создаем форму изменения/удаления отдела
             childForm.Show(); //показываем новую форму
             childForm.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
         }
+        //Отделы-Добавить
+        private void MenuAddDep_Click(object sender, EventArgs e)
+        {
+            Enabled = false;
+            var formAddDep = new FormAddDep(list, this, DataGridDeps); //создаем форму добавления отдела
+            formAddDep.Show(); //показываем новую форму
+            formAddDep.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
+        }        
+        //Отделы-Изменить
+        private void MenuChangeDep_Click(object sender, EventArgs e)
+        {
+            ShowChildFormDep(Program.Действия.Изменить.ToString()); //вызываем дочернюю форму
+        }
+        //Отделы-Удалить
+        private void MenuRemoveDep_Click(object sender, EventArgs e)
+        {
+            ShowChildFormDep(Program.Действия.Удалить.ToString()); //вызываем дочернюю форму
+        }
 
+
+        //Cоздание дочерней формы сотрудников и переключение на нее
+        private void ShowChildFormEmp(string operation)
+        {
+            Enabled = false;
+            var childForm = new FormAddChangeRemEmp(list, this, DataGridEmps, operation); //создаем форму добавления/изменения/удаления отдела
+            childForm.Show(); //показываем новую форму
+            childForm.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы            
+        }
         //Cотрудники-Добавить
         private void MenuAddEmp_Click(object sender, EventArgs e)
         {
@@ -284,23 +301,15 @@ namespace EmployeeList_2._0
             else
                 MessageBox.Show($"Нет отделов для добавления сотрудника!");
         }
-        //Cоздание дочерней формы сотрудников и переключение на нее
-        private void ShowChildFormEmp(string operation)
-        {
-            Enabled = false;
-            var childForm = new FormAddChangeRemEmp(list, this, DataGridEmps,operation); //создаем форму добавления отдела
-            childForm.Show(); //показываем новую форму
-            childForm.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы            
-        }
-        //Сотрудники-Изменить-По данным
-        private void MenuChangeEmpByData_Click(object sender, EventArgs e)
+        //Сотрудники-Изменить
+        private void MenuChangeEmp_Click(object sender, EventArgs e)
         {
             if (list.Employees.Count > 0)
                 ShowChildFormEmp(Program.Действия.Изменить.ToString()); //вызываем дочернюю форму
             else
                 MessageBox.Show($"Нет сотрудников для изменения");
         }
-        //Сотрудники-Удалить-По данным
+        //Сотрудники-Удалить
         private void MenuRemoveEmp_Click(object sender, EventArgs e)
         {
             if (list.Employees.Count > 0)
@@ -308,25 +317,14 @@ namespace EmployeeList_2._0
             else
                 MessageBox.Show($"Нет сотрудников для изменения");
         }
+
         //Вывод данных по отделу
         private void ComboBoxDeps_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ComboBoxDeps.SelectedItem.ToString() != _emptyDepField)
             {
                 SelectRowInDataGrid(DataGridDeps,ComboBoxDeps.SelectedIndex);
-
-                if(list.SumSalary(ComboBoxDeps.SelectedIndex)>0)
-                    SumOfDepSalary.Text = sumOfDepSalaryTitle + list.SumSalary(ComboBoxDeps.SelectedIndex);
-                else
-                    NotDataMessage();
-                if (list.AvgSalary(ComboBoxDeps.SelectedIndex) > 0)
-                    AvgOfDepSalary.Text = avgOfDepSalaryTitle + list.AvgSalary(ComboBoxDeps.SelectedIndex);
-                else
-                    NotDataMessage();
-                if (list.CountOfEmp(ComboBoxDeps.SelectedIndex) > 0)
-                    CountOfDepEmp.Text = countOfDepEmpTitle + list.CountOfEmp(ComboBoxDeps.SelectedIndex);
-                else
-                    NotDataMessage();
+                SetDepInfoLabelText(); //устанавливаем значение инфо-лейблов отдела
             }
             else
             {
@@ -335,6 +333,24 @@ namespace EmployeeList_2._0
             }
                 
         }
+        //Установка значений инфо-лейблов отдела
+        private void SetDepInfoLabelText()
+        {
+            if (list.SumSalary(ComboBoxDeps.SelectedIndex) > 0)
+                SumOfDepSalary.Text = sumOfDepSalaryTitle + 
+                                      list.SumSalary(ComboBoxDeps.SelectedIndex).ToString("#.##") + " " + сurrency;
+            else
+                NotDataMessage(); //выводим сообщение об отсутствии данных
+            if (list.AvgSalary(ComboBoxDeps.SelectedIndex) > 0)
+                AvgOfDepSalary.Text = avgOfDepSalaryTitle + 
+                                      list.AvgSalary(ComboBoxDeps.SelectedIndex).ToString("#.##") + " " + сurrency;
+            else
+                NotDataMessage(); //выводим сообщение об отсутствии данных
+            if (list.CountOfEmp(ComboBoxDeps.SelectedIndex) > 0)
+                CountOfDepEmp.Text = countOfDepEmpTitle + list.CountOfEmp(ComboBoxDeps.SelectedIndex);
+            else
+                NotDataMessage(); //выводим сообщение об отсутствии данных
+        }
         //Вывод сообщения об отсуствии данных для отдела
         private void NotDataMessage()
         {
@@ -342,6 +358,7 @@ namespace EmployeeList_2._0
             AvgOfDepSalary.Text = avgOfDepSalaryTitle + noDataString;
             CountOfDepEmp.Text = countOfDepEmpTitle + noDataString;
         }
+
         //Кол-во сотрудников по отделам
         private void CountOfEmpPerDep_Click(object sender, EventArgs e)
         {
@@ -350,15 +367,8 @@ namespace EmployeeList_2._0
             {
                 foreach (var el in list.CountOfEmpPerDep())
                 {
-                    var ending = string.Empty;
-                    if (regex1.IsMatch(el.Value.ToString()))
-                        ending = endingOne;
-                    else
-                    {
-                        if (regex2.IsMatch(el.Value.ToString()))
-                            ending = endingTwo;
-                    }
-                    output += String.Format($"Отдел '{el.Key}': {el.Value} cотрудник{ending}.\r");
+                    string ending = CheckEndingOfWord(el); //задаем окончание слова
+                    output += String.Format($"Отдел \"{el.Key}\": {el.Value} cотрудник{ending}.\r");
                 }
             }
             else
@@ -366,5 +376,24 @@ namespace EmployeeList_2._0
             MessageBox.Show(output);
         }
 
+        //Проверка и задание окончания слова за цифрой
+        private string CheckEndingOfWord(KeyValuePair<string,int> elem)
+        {
+                var ending = string.Empty;
+                if (regexMany.IsMatch(elem.Value.ToString()))
+                    ending = endingMany;
+                else
+                {
+                    if (regexSingle.IsMatch(elem.Value.ToString()))
+                        ending = endingSingle;
+                }
+            return ending;
+        }
+
+        //Выход
+        private void MenuExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
     }
 }

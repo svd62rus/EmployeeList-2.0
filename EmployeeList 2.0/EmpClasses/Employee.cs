@@ -17,6 +17,7 @@ namespace EmployeeList_2._0.EmpClasses
         public DateTime DateHired { get; set; } //дата найма
         public DateTime? DateFired { get; set; } //дата увольнения
 
+
         public Employee(string surname, string name, string patronymic, int departmentId, double salary)
         {
             Name = name;

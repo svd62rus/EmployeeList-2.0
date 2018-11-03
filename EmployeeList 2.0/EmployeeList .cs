@@ -12,6 +12,7 @@ namespace EmployeeList_2._0
         public List<Employee> Employees { get; set; } //cписок самих сотрудников
         public List<Department> Departments { get; set; } //список отделов
 
+
         public EmployeeList()
         {
             Employees = new List<Employee>();
