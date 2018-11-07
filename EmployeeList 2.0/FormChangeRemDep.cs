@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using EmployeeList_2._0.EmpClasses;
 
@@ -37,32 +30,9 @@ namespace EmployeeList_2._0
             this.dataGrid = dataGrid;
             this.dataGridEmp = dataGridEmp;
             dataGrid.ClearSelection();
-            //устанавливаем доступность элементов
-            TextBoxNewDepName.Enabled = false;
-            ButtonOK.Enabled = false;
-            ButtonSearch.Enabled = false;
-            TextBoxDesiredDep.TextChanged += TextBoxDesiredDep_TextChanged; //подписка на изменение текстбокса поиска
-            TextBoxNewDepName.TextChanged += TextBoxNewDepName_TextChanged; //подписка на изменение текстбокса нового имени отдела
-
-        }
+            FirstSetEnabledElem(); //устанавливаем доступность элементов
+        }        
         
-        //Проверка на пустую строку поиска
-        private void TextBoxDesiredDep_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(TextBoxDesiredDep.Text))
-                ButtonSearch.Enabled = false;
-            else
-                ButtonSearch.Enabled = true;
-        }
-        //Проверка на пустую строку нового имени отдела
-        private void TextBoxNewDepName_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(TextBoxNewDepName.Text))
-                ButtonOK.Enabled = false;
-            else
-                ButtonOK.Enabled = true;
-        }
-  
         //Кнопка "Найти"
         private void ButtonSearch_Click(object sender, EventArgs e)
         {
@@ -77,9 +47,9 @@ namespace EmployeeList_2._0
             else
                 same = SearchDep(strId, ref requiredDep); //ищем отдел  
             if (!same && isInt)
-                MessageBox.Show($"Отдела №{id} нет");
+                MessageBox.Show($"Отдела №{id} нет!");
             if (!same && !isInt)
-                MessageBox.Show($"Отдела c именем '{strId}' нет");
+                MessageBox.Show($"Отдела c именем \"{strId}\" нет!");
             if (same) //при нахождении отдела, изменяем доступность элементов формы
             {
                 mainForm.SelectRowInDataGrid(dataGrid,requiredDep.Id);
@@ -90,7 +60,7 @@ namespace EmployeeList_2._0
                     TextBoxNewDepName.Enabled = true;
                 else
                 {
-                    TextBoxNewDepName.TextChanged -= TextBoxNewDepName_TextChanged; //отписка от изменений текстбокса нового имени отдела
+                    //TextBoxNewDepName.TextChanged -= TextBoxNewDepName_TextChanged; //отписка от изменений текстбокса нового имени отдела
                     ButtonOK.Enabled = true;
                 }
             }          
@@ -159,14 +129,14 @@ namespace EmployeeList_2._0
                 if (SearchDep(TextBoxNewDepName.Text,ref sameDep,oldName))
                 {
                     mainForm.SelectRowInDataGrid(dataGrid, sameDep.Id); //выделяем строку с похожим отделом
-                    MessageBox.Show($"Отдел '{newDepName}' или похожий уже есть!");
+                    MessageBox.Show($"Отдел c именем \"{newDepName}\" или похожий уже есть!");
                 }   
                 else
                 {
                     list.СhangeDep(requiredDep, TextBoxNewDepName.Text); //изменяем название отдела
                     mainForm.RefreshMainForm(dataGrid, list.Departments); //обновляем главную форму
                     mainForm.SelectRowInDataGrid(dataGrid, requiredDep.Id); //выделяем нужную строку
-                    MessageBox.Show($"Имя отдела '{oldName}' изменено на '{requiredDep.Name}'");
+                    MessageBox.Show($"Имя отдела \"{oldName}\" изменено на \"{requiredDep.Name}\"!");
                     RestoreVisibleToOrigin(oper); //восстанавливаем видимость элементов
                 }                
             }
@@ -176,7 +146,7 @@ namespace EmployeeList_2._0
                 //если отдел содержит сотрудников
                 if (IsEmpInDep())
                 {
-                    MessageBox.Show($"Отдел '{requiredDep.Name}' удалить нельзя, так как он содержит сотрудников");
+                    MessageBox.Show($"Отдел \"{requiredDep.Name}\" удалить нельзя, так как он содержит сотрудников!");
                     RestoreVisibleToOrigin(oper);
                 }   
                 //иначе
@@ -187,7 +157,7 @@ namespace EmployeeList_2._0
                     mainForm.RefreshMainForm(dataGridEmp, list.Employees);
                     dataGrid.ClearSelection(); //убираем выделение строки
                     dataGridEmp.ClearSelection();
-                    MessageBox.Show($"Отдел {requiredDep.Name} удален");
+                    MessageBox.Show($"Отдел \"{requiredDep.Name}\" удален!");
                     RestoreVisibleToOrigin(oper);
                 }
 
@@ -224,6 +194,35 @@ namespace EmployeeList_2._0
         private void ButtonCancel_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void CheckEmptyString()
+        {
+            if (string.IsNullOrWhiteSpace(TextBoxNewDepName.Text))
+                ButtonOK.Enabled = false;
+            else
+                ButtonOK.Enabled = true;
+        }
+
+        //Проверка на ввод поиска
+        private void TextBoxDesiredDep_TextChanged(object sender, EventArgs e)
+        {
+            var checkVar = new CheckTextString(TextBoxDesiredDep.Text);
+            ButtonSearch.Enabled = checkVar.CheckText();
+        }
+        //Проверка на ввод нового имени
+        private void TextBoxNewDepName_TextChanged(object sender, EventArgs e)
+        {
+            var checkVar = new CheckTextString(TextBoxNewDepName.Text);
+            ButtonOK.Enabled = checkVar.CheckText();
+        }
+
+        //Первичная установка доступности элементов
+        private void FirstSetEnabledElem()
+        {
+            TextBoxNewDepName.Enabled = false;
+            ButtonOK.Enabled = false;
+            ButtonSearch.Enabled = false;
         }
     }
 }

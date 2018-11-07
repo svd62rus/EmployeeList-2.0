@@ -55,9 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckTextString.cs" />
     <Compile Include="EmpClasses\Department.cs" />
     <Compile Include="EmpClasses\Employee.cs" />
     <Compile Include="EmployeeList .cs" />
+    <Compile Include="FilterClass.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +84,13 @@
     <Compile Include="FormChangeRemDep.Designer.cs">
       <DependentUpon>FormChangeRemDep.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormEmpFire.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormEmpFire.Designer.cs">
+      <DependentUpon>FormEmpFire.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ILogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -95,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormChangeRemDep.resx">
       <DependentUpon>FormChangeRemDep.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormEmpFire.resx">
+      <DependentUpon>FormEmpFire.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -126,7 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Icons\" />
-    <Folder Include="Locals\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="images\folder_open.png" />
@@ -142,6 +153,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="images\options.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ExportManager\ExportManager.csproj">
+      <Project>{97db86d8-1f3f-45fb-bb99-7957397ae4b9}</Project>
+      <Name>ExportManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

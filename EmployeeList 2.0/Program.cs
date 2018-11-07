@@ -12,7 +12,12 @@ namespace EmployeeList_2._0
     {
         public enum Действия {Добавить, Изменить, Удалить};
         public enum ФИО {Фамилия, Имя, Отчество};
-        public const ushort digitInSalary = 7; 
+
+        public enum Сортировка { Алфавит, Алфавитобратная, Позарплате, Позарплатеобратная };
+        public const ushort digitInSalary = 7;
+        public const ushort numOfLetter = 100;
+
+        public const string mainLog = "mainlog.log";
         /// <summary>
         /// The main entry point for the application.
         /// </summary>

@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmployeeList 2.0", "EmployeeList 2.0\EmployeeList 2.0.csproj", "{0347802A-273D-4188-A4C6-7B3C9ED743A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportManager", "ExportManager\ExportManager.csproj", "{97DB86D8-1F3F-45FB-BB99-7957397AE4B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{0347802A-273D-4188-A4C6-7B3C9ED743A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0347802A-273D-4188-A4C6-7B3C9ED743A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0347802A-273D-4188-A4C6-7B3C9ED743A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97DB86D8-1F3F-45FB-BB99-7957397AE4B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97DB86D8-1F3F-45FB-BB99-7957397AE4B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97DB86D8-1F3F-45FB-BB99-7957397AE4B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97DB86D8-1F3F-45FB-BB99-7957397AE4B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

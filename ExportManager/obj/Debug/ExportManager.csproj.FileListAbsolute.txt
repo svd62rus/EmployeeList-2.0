@@ -1,0 +1,6 @@
+D:\VSProjects\EmployeeList 2.0\ExportManager\bin\Debug\ExportManager.dll
+D:\VSProjects\EmployeeList 2.0\ExportManager\bin\Debug\ExportManager.pdb
+D:\VSProjects\EmployeeList 2.0\ExportManager\obj\Debug\ExportManager.csprojAssemblyReference.cache
+D:\VSProjects\EmployeeList 2.0\ExportManager\obj\Debug\ExportManager.csproj.CoreCompileInputs.cache
+D:\VSProjects\EmployeeList 2.0\ExportManager\obj\Debug\ExportManager.dll
+D:\VSProjects\EmployeeList 2.0\ExportManager\obj\Debug\ExportManager.pdb

@@ -52,6 +52,7 @@
             this.TextBoxDesiredDep.Name = "TextBoxDesiredDep";
             this.TextBoxDesiredDep.Size = new System.Drawing.Size(177, 20);
             this.TextBoxDesiredDep.TabIndex = 1;
+            this.TextBoxDesiredDep.TextChanged += new System.EventHandler(this.TextBoxDesiredDep_TextChanged);
             // 
             // ButtonSearch
             // 
@@ -88,6 +89,7 @@
             this.TextBoxNewDepName.Name = "TextBoxNewDepName";
             this.TextBoxNewDepName.Size = new System.Drawing.Size(177, 20);
             this.TextBoxNewDepName.TabIndex = 5;
+            this.TextBoxNewDepName.TextChanged += new System.EventHandler(this.TextBoxNewDepName_TextChanged);
             // 
             // ButtonOK
             // 

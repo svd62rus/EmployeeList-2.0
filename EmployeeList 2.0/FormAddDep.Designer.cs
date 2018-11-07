@@ -30,7 +30,7 @@
         {
             this.LabelDepName = new System.Windows.Forms.Label();
             this.TextBoxDepName = new System.Windows.Forms.TextBox();
-            this.buttonOK = new System.Windows.Forms.Button();
+            this.ButtonOK = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -49,16 +49,17 @@
             this.TextBoxDepName.Name = "TextBoxDepName";
             this.TextBoxDepName.Size = new System.Drawing.Size(184, 20);
             this.TextBoxDepName.TabIndex = 1;
+            this.TextBoxDepName.TextChanged += new System.EventHandler(this.TextBoxDepName_TextChanged);
             // 
-            // buttonOK
+            // ButtonOK
             // 
-            this.buttonOK.Location = new System.Drawing.Point(12, 130);
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(75, 23);
-            this.buttonOK.TabIndex = 2;
-            this.buttonOK.Text = "Добавить";
-            this.buttonOK.UseVisualStyleBackColor = true;
-            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
+            this.ButtonOK.Location = new System.Drawing.Point(12, 130);
+            this.ButtonOK.Name = "ButtonOK";
+            this.ButtonOK.Size = new System.Drawing.Size(75, 23);
+            this.ButtonOK.TabIndex = 2;
+            this.ButtonOK.Text = "Добавить";
+            this.ButtonOK.UseVisualStyleBackColor = true;
+            this.ButtonOK.Click += new System.EventHandler(this.ButtonOK_Click);
             // 
             // buttonCancel
             // 
@@ -68,7 +69,7 @@
             this.buttonCancel.TabIndex = 3;
             this.buttonCancel.Text = "Отмена";
             this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+            this.buttonCancel.Click += new System.EventHandler(this.ButtonCancel_Click);
             // 
             // FormAddDep
             // 
@@ -76,7 +77,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(216, 158);
             this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.buttonOK);
+            this.Controls.Add(this.ButtonOK);
             this.Controls.Add(this.TextBoxDepName);
             this.Controls.Add(this.LabelDepName);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -93,7 +94,7 @@
 
         private System.Windows.Forms.Label LabelDepName;
         private System.Windows.Forms.TextBox TextBoxDepName;
-        private System.Windows.Forms.Button buttonOK;
+        private System.Windows.Forms.Button ButtonOK;
         private System.Windows.Forms.Button buttonCancel;
     }
 }

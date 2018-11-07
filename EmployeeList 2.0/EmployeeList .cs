@@ -5,13 +5,15 @@ using EmployeeList_2._0.EmpClasses;
 
 namespace EmployeeList_2._0
 {
+    public delegate bool Filter(Employee employee, FilterClass filterParams);
+    public delegate bool CheckEmp(bool typeOfEmp);
+
     [Serializable]
     //класс Список сотрудников
     public class EmployeeList : IEnumerable
     {
         public List<Employee> Employees { get; set; } //cписок самих сотрудников
         public List<Department> Departments { get; set; } //список отделов
-
 
         public EmployeeList()
         {
@@ -44,7 +46,7 @@ namespace EmployeeList_2._0
                 }
             }
 
-            ShiftDeps();
+            ShiftDepsId();
 
         }
 
@@ -68,7 +70,7 @@ namespace EmployeeList_2._0
             return requiredEmp.Id;
         }
         //Cдвиг адишников отделов в отделах
-        private void ShiftDeps()
+        private void ShiftDepsId()
         {
             foreach (var el in Departments)
             {
@@ -87,15 +89,13 @@ namespace EmployeeList_2._0
             }
         }
         //Cдвиг айдишников самих сотрудников
-        private void ShiftEmps()
+        private void ShiftEmpsId()
         {
             foreach (var el in Employees)
             {
                 el.Id = Employees.IndexOf(el) + 1;
             }
         }
-
-
         //Удаление сотрудника
         public void RemoveEmp(int id)
         {
@@ -107,26 +107,35 @@ namespace EmployeeList_2._0
                     break;
                 }
             }
-            ShiftEmps();
+            ShiftEmpsId();
         }
 
         //Cредняя ЗП
         public double AvgSalary()
         {
-            return SumSalary() / Employees.Count;
+            return SumSalary() / CountOfEmp();
         }
         //Общая ЗП 
         public double SumSalary()
         {
             double sumSalary = 0;
             foreach (var el in Employees)
-                sumSalary += el.Salary;
+            {
+                if (!el.IsFired)
+                    sumSalary += el.Salary;
+            } 
             return sumSalary;
         }
         //Кол-во сотрудников
         public int CountOfEmp()
         {
-            return Employees.Count;
+            int count = 0;
+            foreach (var el in Employees)
+            {
+                if (!el.IsFired)
+                    count++;
+            }
+            return count;
         }
         //Общая ЗП по отделу
         public double SumSalary(int id)
@@ -134,7 +143,7 @@ namespace EmployeeList_2._0
             double sumDepSalary = 0;
             foreach (var el in Employees)
             {
-                if (el.DepartmentId == id)
+                if (el.DepartmentId == id && !el.IsFired)
                 {
                     sumDepSalary += el.Salary;
                 }
@@ -148,7 +157,7 @@ namespace EmployeeList_2._0
             int count = 0;
             foreach (var el in Employees)
             {
-                if (el.DepartmentId == id)
+                if (el.DepartmentId == id && !el.IsFired)
                     count++;
             }
             return SumSalary(id) / count;
@@ -174,7 +183,7 @@ namespace EmployeeList_2._0
                 {
                     foreach (var elem in Employees)
                     {
-                        if (elem.DepartmentId == el.Id)
+                        if (elem.DepartmentId == el.Id && !elem.IsFired)
                             count++;
                     }
 
@@ -182,6 +191,116 @@ namespace EmployeeList_2._0
                 }
             }
             return count;
+        }
+
+        //Фильтр по зарплате
+        public bool SalaryFilter(Employee employee, FilterClass filterParams)
+        {
+            if (filterParams.More && filterParams.Less)
+            {
+                if (employee.Salary > filterParams.Salary && employee.Salary < filterParams.MaxSalary)
+                    return true;
+            }
+            else
+            {
+                if (filterParams.More)
+                {
+                    if (employee.Salary > filterParams.Salary)
+                        return true;
+                }
+                if (filterParams.Less)
+                {
+                    if (employee.Salary < filterParams.Salary)
+                        return true;
+                }
+            }
+            
+            return false;
+        }
+        //Фильтрация сотрудников
+        public List<Employee> EmployeeFilter(Filter filter, FilterClass filterParams)
+        {
+            List<Employee> emps = new List<Employee>();
+            foreach (var elem in Employees)
+            {
+                if (filter(elem, filterParams))
+                    emps.Add(elem);
+            }
+
+            return emps;
+        }
+
+        //Cравнение ФИО А-Я
+        private int CompareEmpIncreaseLetter(Employee emp1, Employee emp2)
+        {
+            return emp1.FullName.CompareTo(emp2.FullName);
+        }
+        //Cравнение ФИО Я-А
+        private int CompareEmpDescendLetter(Employee emp1, Employee emp2)
+        {
+            return emp2.FullName.CompareTo(emp1.FullName);
+        }
+        //Cравнение зарплаты 0-9
+        private int CompareEmpIncreaseSalary(Employee emp1, Employee emp2)
+        {
+            return emp1.Salary.CompareTo(emp2.Salary);
+        }
+        //Cравнение зарплаты 9-0
+        private int CompareEmpDescendSalary(Employee emp1, Employee emp2)
+        {
+            return emp2.Salary.CompareTo(emp1.Salary);
+        }
+        //Сортировка
+        public void SortEmp(int typeOfSort)
+        {
+            switch (typeOfSort)
+            {
+                case 0:
+                    Employees.Sort(new Comparison<Employee>(CompareEmpIncreaseLetter));
+                    break;
+                case 1:
+                    Employees.Sort(new Comparison<Employee>(CompareEmpDescendLetter));
+                    break;
+                case 2:
+                    Employees.Sort(new Comparison<Employee>(CompareEmpIncreaseSalary));
+                    break;
+                case 3:
+                    Employees.Sort(new Comparison<Employee>(CompareEmpDescendSalary));
+                    break;
+            }
+            ShiftEmpsId();
+        }
+    
+        //Увольнение
+        public void FireEmp(Employee emp)
+        {
+            emp.IsFired = true;
+            emp.DepartmentId = int.MinValue;
+            emp.DateFired = DateTime.Now;
+        }
+
+        //Проверка работает ли сотрудник
+        public bool CheckEmpType(bool typeOfEmp)
+        {
+            if (typeOfEmp)
+                return true;
+            else
+                return false;
+        }
+        //Формирование листа с ФИО рабочих либо уволенных
+        public List<string> FullNames(CheckEmp checkemp, bool typeOfEmp)
+        {
+            
+            bool requiredType = true;
+            if (checkemp(typeOfEmp))
+                requiredType = false;
+            var outStringList = new List<string>();
+            foreach (var elem in Employees)
+            {
+                if (elem.IsFired==requiredType)
+                    outStringList.Add($"{elem.Id}. {elem.FullName}");
+            }
+            return outStringList;
         }
 
         IEnumerator IEnumerable.GetEnumerator()

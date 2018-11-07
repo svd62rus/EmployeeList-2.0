@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using EmployeeList_2._0.EmpClasses;
 
@@ -35,16 +29,7 @@ namespace EmployeeList_2._0
             this.mainForm = mainForm;
             this.dataGrid = dataGrid;
             dataGrid.ClearSelection();
-            //устанавливаем доступность кнопки поиска
-            if (operation == Program.Действия.Добавить.ToString())
-                ButtonSearch.Visible = false;
-            else
-            {
-                ComboBoxDeps.Enabled = false;
-                TextBoxSalary.Enabled = false;
-                ButtonOK.Enabled = false;
-            }
-
+            SetEnabledSearchButton(oper);//устанавливаем доступность кнопки поиска
             ComboBoxDeps.DropDownStyle = ComboBoxStyle.DropDownList; //делаем комбобокс нередактируемым
             FillDepsList(list.Departments); //заполняем комбобокс отделами            
         }
@@ -65,7 +50,8 @@ namespace EmployeeList_2._0
         {
             foreach (var el in fields)
             {
-                if (String.IsNullOrWhiteSpace(el.Value)) //если поля ФИО пустые
+                var checkVar = new CheckTextString(el.Value);
+                if(!checkVar.CheckText())
                     return false;
             }
 
@@ -85,117 +71,55 @@ namespace EmployeeList_2._0
         {
             if (oper == Program.Действия.Удалить.ToString())
             {
-                list.RemoveEmp(requiredEmp.Id); //удаляем отдел
-                mainForm.RefreshMainForm(dataGrid, list.Employees); //обновляем главную форму
-                dataGrid.ClearSelection(); //убираем выделение строки
-                //Восстанавливаем видимость элементов
-                TextBoxSurname.Enabled = true;
-                TextBoxName.Enabled = true;
-                TextBoxPatronymic.Enabled = true;
-                TextBoxSurname.Text = string.Empty; 
-                TextBoxName.Text = string.Empty;
-                TextBoxPatronymic.Text = string.Empty;
-                TextBoxSalary.Text = string.Empty;
-                ComboBoxDeps.SelectedIndex = 0;
-                ComboBoxDeps.Enabled = false;
-                TextBoxSalary.Enabled = false;
-                ButtonOK.Enabled = false;
-                ButtonSearch.Enabled = true;
-                MessageBox.Show($"Сотрудник {requiredEmp.FullName} удален");
+                RemoveDepAndRefreshElems();
+                MessageBox.Show($"Сотрудник \"{requiredEmp.FullName}\" удален!");
             }
             else
             {
-                //создаем ФИО типа словарь из текстбоксов
-                var fioFields = new Dictionary<string, string>
-            {
-                {Program.ФИО.Фамилия.ToString(),TextBoxSurname.Text},
-                {Program.ФИО.Имя.ToString(),TextBoxName.Text},
-                {Program.ФИО.Отчество.ToString(),TextBoxPatronymic.Text}
-            };
+                var fioFields = MakeFullNameFromTextBox(); //создаем ФИО типа словарь из текстбоксов
                 //проверяем заполнено ли ФИО и выбран ли отдел отличный от того, который по умолчанию
                 if (CheckFillOfFields(fioFields) && ComboBoxDeps.SelectedItem.ToString() != _emptyDepField)
                 {
-                    //проверяем введена ли правильная зарплата
-                    if (double.TryParse(TextBoxSalary.Text, out double salary))
+                    if (double.TryParse(TextBoxSalary.Text, out double salary)) //проверяем введена ли правильная зарплата
                     {
                         var newFullName = MakeFullName(fioFields); //формируем cтроку с ФИО
                         if (list.Employees.Count > 0) //если кол-во сотрудников > 0
                         {
-                            //если действие - добавить сотрудника
                             if (oper == Program.Действия.Добавить.ToString())
                             {
-                                //проверяем дубликаты
-                                if (SearchEmp(newFullName, ref requiredEmp))
-                                {
-                                    var selectedRow = requiredEmp.Id;
-                                    mainForm.SelectRowInDataGrid(dataGrid, selectedRow); //выделяем строку-дубликат
-                                    MessageBox.Show($"Cотрудник '{newFullName}' или похожим именем уже есть!");
-                                }
+                                if(CheckDub(newFullName,fioFields,salary))
+                                    MessageBox.Show($"Сотрудник \"{newFullName}\" добавлен!");
                                 else
-                                {
-                                    MakeActionAndShowChanges(
-                                        fioFields, ComboBoxDeps.SelectedIndex,
-                                        salary, Program.Действия.Добавить.ToString()); //вызываем добавление
-                                    MessageBox.Show($"Сотрудник '{newFullName}' добавлен");
-                                }
+                                MessageBox.Show($"Cотрудник \"{newFullName}\" или похожим именем уже есть!");
+                                
                             }
-                            //если действие - изменить сотрудника
                             if (oper == Program.Действия.Изменить.ToString())
                             {
-                                Employee sameEmp = null;
-                                var oldFullName = requiredEmp.FullName;
-                                //проверяем, что похожего отдела нет. если меняем тот же отдел, проверка исключается
-                                if (SearchEmp(newFullName, ref sameEmp, requiredEmp.FullName))
-                                {
-                                    var selectedRow = sameEmp.Id;
-                                    mainForm.SelectRowInDataGrid(dataGrid, selectedRow); //выделяем строку-дубликат
-                                    MessageBox.Show($"Cотрудник '{newFullName}' или похожим именем уже есть!");
-                                }
+                                if(CheckDub(newFullName,fioFields,salary,out string oldFullName))
+                                    MessageBox.Show($"Сотрудник \"{oldFullName}\" изменен!");
                                 else
-                                {
-                                    MakeActionAndShowChanges(fioFields, ComboBoxDeps.SelectedIndex,
-                                        salary, Program.Действия.Изменить.ToString()); //вызываем изменение
-                                    MessageBox.Show($"Сотрудник '{oldFullName}' изменен на {newFullName}");
-                                }
+                                    MessageBox.Show($"Cотрудник \"{newFullName}\" или похожим именем уже есть!");
                             }
                         }
-                        else
-                        //если cотрудников < 0 - добавить в любом случае
+                        else //если cотрудников < 0 - добавить в любом случае
                         {
-                            MakeActionAndShowChanges(
-                                fioFields, ComboBoxDeps.SelectedIndex,
-                                salary, Program.Действия.Добавить.ToString()); //вызываем добавление //вызываем добавление
-                            MessageBox.Show($"Сотрудник '{newFullName}' добавлен");
+                            MakeActionAndShowChanges(fioFields, ComboBoxDeps.SelectedIndex,salary, Program.Действия.Добавить.ToString()); //вызываем добавление //вызываем добавление
+                            MessageBox.Show($"Сотрудник \"{newFullName}\" добавлен");
                         }
                     }
-                    //зарплата введена неверно
-                    else
-                        MessageBox.Show("Зарплата должна быть указана в числовом виде!\r" +
-                                        "Для отделения руб. от коп. используйте запятую.");
+                    else MessageBox.Show("Зарплата должна быть указана в числовом виде!\rДля отделения руб. от коп. используйте запятую."); //зарплата введена неверно
                 }
-                //поля фио не заполнены, либо отдел выбран по умолчанию
-                else
-                    MessageBox.Show("Вы заполнили не все поля,\r" +
-                                    "либо не выбрали отдел!");
-
+                else MessageBox.Show("Вы неверно заполнили поля,\rлибо не выбрали отдел!"); //поля фио не заполнены, либо отдел выбран по умолчанию
             }
-            
         }
 
         //Процесс действий с cотрудником и отображение изменений в датагриде
-        private void MakeActionAndShowChanges(Dictionary<string, string> fioFields, int depId, double salary,string oper)
+        private void MakeActionAndShowChanges(Dictionary<string, string> fioFields, int depId, double salary, string oper)
         {
             int selectedRow = 0;
-
-            //Очищаем текстбоксы
-            TextBoxSurname.Clear();
-            TextBoxName.Clear();
-            TextBoxPatronymic.Clear();
-            TextBoxSalary.Clear();
-
+            ClearTextBoxes(); //очищаем текстбоксы
             if (oper == Program.Действия.Добавить.ToString())
             {
-                //добавляем cотрудника
                 selectedRow = list.AddEmp(
                     fioFields[Program.ФИО.Фамилия.ToString()],
                     fioFields[Program.ФИО.Имя.ToString()],
@@ -203,8 +127,7 @@ namespace EmployeeList_2._0
                     depId,
                     salary);
             }
-
-            if (oper==Program.Действия.Изменить.ToString())
+            if (oper == Program.Действия.Изменить.ToString())
             {
                 selectedRow = list.ChangeEmp(requiredEmp,
                     fioFields[Program.ФИО.Фамилия.ToString()],
@@ -212,12 +135,7 @@ namespace EmployeeList_2._0
                     fioFields[Program.ФИО.Отчество.ToString()],
                     depId,
                     salary);
-                //Восстанавливаем видимость элементов
-                ComboBoxDeps.SelectedIndex = 0;
-                ComboBoxDeps.Enabled = false;
-                TextBoxSalary.Enabled = false;
-                ButtonOK.Enabled = false;
-                ButtonSearch.Enabled = true;
+                RestoreElemsAfterAction();
             }
             mainForm.RefreshMainForm(dataGrid, list.Employees); //обновляем главную форму
             mainForm.SelectRowInDataGrid(dataGrid, selectedRow); //выделяем новую строку с данными
@@ -230,51 +148,36 @@ namespace EmployeeList_2._0
         }
         //Кнопка "Найти"
         private void ButtonSearch_Click(object sender, EventArgs e)
-        {
-            //создаем ФИО типа словарь из текстбоксов
-            var fioFields = new Dictionary<string, string>
-            {
-                {Program.ФИО.Фамилия.ToString(),TextBoxSurname.Text},
-                {Program.ФИО.Имя.ToString(),TextBoxName.Text},
-                {Program.ФИО.Отчество.ToString(),TextBoxPatronymic.Text}
-            };
-            //ищем совпадение сотрудников
+        { 
+            var fioFields = MakeFullNameFromTextBox();
             bool same = false; //true - поиск успешен, false - нет
             var empFullName = MakeFullName(fioFields); //cоздаем строку с ФИО
-            same = SearchEmp(empFullName, ref requiredEmp); //ищем сотрудника
-            if (same)
-            //если поиск успешен
+            same = SearchEmp(empFullName, ref requiredEmp, out bool isFired); 
+            if (same) //если поиск успешен
             {
-                ButtonSearch.Enabled = false; //делаем кнопку поиска недоступной
-
-                //далее считываем данные сотрудника и заполняем соответствующие поля
-                TextBoxSurname.Text = requiredEmp.Surname;
-                TextBoxName.Text = requiredEmp.Name;
-                TextBoxPatronymic.Text = requiredEmp.Patronymic;
-                TextBoxSalary.Text = requiredEmp.Salary.ToString();
-                ComboBoxDeps.SelectedIndex = requiredEmp.DepartmentId;
-                
-                if (oper == Program.Действия.Изменить.ToString())
+                if (!isFired)
                 {
-                    ComboBoxDeps.Enabled = true;
-                    TextBoxSalary.Enabled = true;
+                    ButtonSearch.Enabled = false; //делаем кнопку поиска недоступной
+                    if (oper == Program.Действия.Изменить.ToString())
+                    {
+                        ComboBoxDeps.Enabled = true;
+                        TextBoxSalary.Enabled = true;
+                    }
+                    else //при удалении делаем недоступными и поля ФИО тоже
+                        DisableFullNameFields();
+                    ButtonOK.Enabled = true; 
                 }
-                else
-                //при удалении делаем недоступными и поля ФИО тоже
-                {
-                    TextBoxSurname.Enabled = false;
-                    TextBoxName.Enabled = false;
-                    TextBoxPatronymic.Enabled = false; 
-                }
-                ButtonOK.Enabled = true;
-                mainForm.SelectRowInDataGrid(dataGrid, requiredEmp.Id);//выделяем найденную строку
+                FillTextBoxes(); //далее считываем данные сотрудника и заполняем соответствующие поля
+                mainForm.SelectRowInDataGrid(dataGrid, requiredEmp.Id); //выделяем найденную строку
+                if (isFired)
+                    MessageBox.Show($"Cотрудник \"{empFullName}\" уволен\rи больше не доступен для изменений!");
             }
             else
-                MessageBox.Show($"Cотрудника '{empFullName}' нет");
+                MessageBox.Show($"Cотрудника \"{empFullName}\" нет!");
         }
 
         //Поиск сотрудника по ФИО
-        private bool SearchEmp(string fullName, ref Employee requiredEmp)
+        private bool SearchEmp(string fullName, ref Employee requiredEmp, out bool isFired)
         {
             foreach (var el in list.Employees)
             {
@@ -283,19 +186,20 @@ namespace EmployeeList_2._0
                 if (currentFullName == inputFullName)
                 {
                     requiredEmp = el;//присваиваем значение искомому отделу
+                    isFired = el.IsFired ? true : false;
                     return true;
                 }
             }
-
+            isFired = false;
             return false;
         }
         private bool SearchEmp(string fullName, ref Employee requiredEmp, string oldFullName)
         {
-            oldFullName = oldFullName.ToLower().Replace(" ", String.Empty); //убираем регистр и пробелы из cтарого ФИО
-            var inputFullName = fullName.ToLower().Replace(" ", String.Empty); //убираем регистр и пробелы из переданного имени
+            oldFullName = oldFullName.ToLower().Replace(" ", string.Empty); //убираем регистр и пробелы из cтарого ФИО
+            var inputFullName = fullName.ToLower().Replace(" ", string.Empty); //убираем регистр и пробелы из переданного имени
             foreach (var el in list.Employees)
             {
-                var currentFullName = el.FullName.ToLower().Replace(" ", String.Empty); //убираем регистр и пробелы из текущего имени
+                var currentFullName = el.FullName.ToLower().Replace(" ", string.Empty); //убираем регистр и пробелы из текущего имени
                 //проверяем что мы не ищем тоже самое
                 if (currentFullName != oldFullName)
                 {
@@ -306,7 +210,7 @@ namespace EmployeeList_2._0
                         return true;
                     }
                 }
-                
+
             }
 
             return false;
@@ -318,6 +222,131 @@ namespace EmployeeList_2._0
                 ButtonOK.Enabled = false;
             else
                 ButtonOK.Enabled = true;
+        }
+
+        //Восстановление видимости элементов
+        private void RestoreElemsVisible()
+        {
+            TextBoxSurname.Enabled = true;
+            TextBoxName.Enabled = true;
+            TextBoxPatronymic.Enabled = true;
+            TextBoxSurname.Text = string.Empty;
+            TextBoxName.Text = string.Empty;
+            TextBoxPatronymic.Text = string.Empty;
+            TextBoxSalary.Text = string.Empty;
+            ComboBoxDeps.SelectedIndex = 0;
+            ComboBoxDeps.Enabled = false;
+            TextBoxSalary.Enabled = false;
+            ButtonOK.Enabled = false;
+            ButtonSearch.Enabled = true;
+        }
+        //Восстановление элементов после действия
+        private void RestoreElemsAfterAction()
+        {
+            ComboBoxDeps.SelectedIndex = 0;
+            ComboBoxDeps.Enabled = false;
+            TextBoxSalary.Enabled = false;
+            ButtonOK.Enabled = false;
+            ButtonSearch.Enabled = true;
+        }
+
+        //Проверка на дубликаты при добавлении
+        private bool CheckDub(string newFullName, Dictionary<string, string> fioFields, double salary)
+        {
+            //проверяем дубликаты
+            if (SearchEmp(newFullName, ref requiredEmp, out bool isFired))
+            {
+                var selectedRow = requiredEmp.Id;
+                mainForm.SelectRowInDataGrid(dataGrid, selectedRow); //выделяем строку-дубликат
+                return false;
+            }
+            else
+            {
+                MakeActionAndShowChanges(fioFields, ComboBoxDeps.SelectedIndex,salary, Program.Действия.Добавить.ToString()); //вызываем добавление
+                return true;
+            }
+        }
+        //Проверка на дубликаты при изменении
+        private bool CheckDub(string newFullName, Dictionary<string, string> fioFields, double salary, out string oldFullName)
+        {
+            Employee sameEmp = null;
+            oldFullName = requiredEmp.FullName;
+            //проверяем, что похожего отдела нет. если меняем тот же отдел, проверка исключается
+            if (SearchEmp(newFullName, ref sameEmp, requiredEmp.FullName))
+            {
+                var selectedRow = sameEmp.Id;
+                mainForm.SelectRowInDataGrid(dataGrid, selectedRow); //выделяем строку-дубликат
+                return false;
+            }
+            else
+            {
+                MakeActionAndShowChanges(fioFields, ComboBoxDeps.SelectedIndex,salary, Program.Действия.Изменить.ToString()); //вызываем изменение
+                return true;
+                
+            }
+        }
+
+        //Cоздание ФИО из текстбоксов
+        private Dictionary<string, string> MakeFullNameFromTextBox()
+        {
+            var fioFields = new Dictionary<string, string>
+            {
+                {Program.ФИО.Фамилия.ToString(),TextBoxSurname.Text},
+                {Program.ФИО.Имя.ToString(),TextBoxName.Text},
+                {Program.ФИО.Отчество.ToString(),TextBoxPatronymic.Text}
+            };
+            return fioFields;
+        }
+
+        //Удаление отдела и обновление элементов
+        private void RemoveDepAndRefreshElems()
+        {
+            list.RemoveEmp(requiredEmp.Id); //удаляем отдел
+            mainForm.RefreshMainForm(dataGrid, list.Employees); //обновляем главную форму
+            dataGrid.ClearSelection(); //убираем выделение строки
+            RestoreElemsVisible(); //восстанавливаем видимость элементов           
+        }
+        //Очистка текстбоксов
+        private void ClearTextBoxes()
+        {
+            TextBoxSurname.Clear();
+            TextBoxName.Clear();
+            TextBoxPatronymic.Clear();
+            TextBoxSalary.Clear();
+        }
+
+        //Заполнение текстбоксов
+        private void FillTextBoxes()
+        {
+            TextBoxSurname.Text = requiredEmp.Surname;
+            TextBoxName.Text = requiredEmp.Name;
+            TextBoxPatronymic.Text = requiredEmp.Patronymic;
+            if (!requiredEmp.IsFired)
+            {
+                TextBoxSalary.Text = requiredEmp.Salary.ToString();
+                ComboBoxDeps.SelectedIndex = requiredEmp.DepartmentId;
+            }
+        }
+
+        //Выключение доступности полей ФИО
+        private void DisableFullNameFields()
+        {
+            TextBoxSurname.Enabled = false;
+            TextBoxName.Enabled = false;
+            TextBoxPatronymic.Enabled = false;
+        }
+
+        //Установка доступности кнопки поиска
+        private void SetEnabledSearchButton(string operation)
+        {
+            if (operation == Program.Действия.Добавить.ToString())
+                ButtonSearch.Visible = false;
+            else
+            {
+                ComboBoxDeps.Enabled = false;
+                TextBoxSalary.Enabled = false;
+                ButtonOK.Enabled = false;
+            }
         }
     }
 }
