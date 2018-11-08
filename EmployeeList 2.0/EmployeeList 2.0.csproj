@@ -36,8 +36,7 @@
     <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>EmployeeList_2._0.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
@@ -55,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckingExportDllClass.cs" />
     <Compile Include="CheckTextString.cs" />
     <Compile Include="EmpClasses\Department.cs" />
     <Compile Include="EmpClasses\Employee.cs" />

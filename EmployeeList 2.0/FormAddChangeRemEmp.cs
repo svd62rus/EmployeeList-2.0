@@ -1,11 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using EmployeeList_2._0.EmpClasses;
 
 namespace EmployeeList_2._0
 {
-    public partial class FormAddChangeRemEmp : Form
+    public partial class FormAddChangeRemEmp : Form,ILogger
     {
         private const string _emptyDepField = "[не выбрано]"; //пустое поле комбобокса с отделами
 
@@ -22,6 +23,7 @@ namespace EmployeeList_2._0
         public FormAddChangeRemEmp(EmployeeList list, Form1 mainForm, DataGridView dataGrid, string operation)
         {
             InitializeComponent();
+            WriteLog($"Info. Компоненты формы сотрудников \"{Name}\" инициализированы");
             oper = operation;
             Text = oper + " " + emp; //задаем заголовок формы
             ButtonOK.Text = operation; //задаем название кнопки действия
@@ -35,7 +37,7 @@ namespace EmployeeList_2._0
         }
 
         //Заполнение списка отдела для выбора
-        private void FillDepsList(List<EmpClasses.Department> depList)
+        private void FillDepsList(List<Department> depList)
         {
             ComboBoxDeps.Items.Add(_emptyDepField); //добавляем пункт по умолчанию
             ComboBoxDeps.SelectedIndex = 0; //его индекс нулевой 
@@ -72,6 +74,7 @@ namespace EmployeeList_2._0
             if (oper == Program.Действия.Удалить.ToString())
             {
                 RemoveDepAndRefreshElems();
+                WriteLog($"Info. Сотрудник \"{requiredEmp.FullName}\" удален");
                 MessageBox.Show($"Сотрудник \"{requiredEmp.FullName}\" удален!");
             }
             else
@@ -87,29 +90,49 @@ namespace EmployeeList_2._0
                         {
                             if (oper == Program.Действия.Добавить.ToString())
                             {
-                                if(CheckDub(newFullName,fioFields,salary))
+                                if (CheckDub(newFullName, fioFields, salary))
+                                {
+                                    WriteLog($"Info. Сотрудник \"{newFullName}\" добавлен");
                                     MessageBox.Show($"Сотрудник \"{newFullName}\" добавлен!");
+                                }
                                 else
-                                MessageBox.Show($"Cотрудник \"{newFullName}\" или похожим именем уже есть!");
-                                
+                                {
+                                    WriteLog($"WARN. Cотрудник \"{newFullName}\" или похожий уже есть");
+                                    MessageBox.Show($"Cотрудник \"{newFullName}\" или похожий уже есть!");
+                                } 
                             }
                             if (oper == Program.Действия.Изменить.ToString())
                             {
-                                if(CheckDub(newFullName,fioFields,salary,out string oldFullName))
+                                if (CheckDub(newFullName, fioFields, salary, out string oldFullName))
+                                {
+                                    WriteLog($"Info. Сотрудник \"{oldFullName}\" изменен");
                                     MessageBox.Show($"Сотрудник \"{oldFullName}\" изменен!");
+                                }
                                 else
-                                    MessageBox.Show($"Cотрудник \"{newFullName}\" или похожим именем уже есть!");
+                                {
+                                    WriteLog($"Info. Cотрудник \"{newFullName}\" или похожий уже есть");
+                                    MessageBox.Show($"Cотрудник \"{newFullName}\" или похожий уже есть!");
+                                }   
                             }
                         }
                         else //если cотрудников < 0 - добавить в любом случае
                         {
                             MakeActionAndShowChanges(fioFields, ComboBoxDeps.SelectedIndex,salary, Program.Действия.Добавить.ToString()); //вызываем добавление //вызываем добавление
+                            WriteLog($"Info. Сотрудник \"{newFullName}\" добавлен");
                             MessageBox.Show($"Сотрудник \"{newFullName}\" добавлен");
                         }
                     }
-                    else MessageBox.Show("Зарплата должна быть указана в числовом виде!\rДля отделения руб. от коп. используйте запятую."); //зарплата введена неверно
+                    else
+                    {
+                        WriteLog($"WARN. Зарплата указана в неверном виде");
+                        MessageBox.Show("Зарплата должна быть указана в числовом виде!\rДля отделения руб. от коп. используйте запятую.");
+                    }
                 }
-                else MessageBox.Show("Вы неверно заполнили поля,\rлибо не выбрали отдел!"); //поля фио не заполнены, либо отдел выбран по умолчанию
+                else
+                {
+                    WriteLog($"WARN. Неверно заполнены поля ФИО либо не выбран отдел");
+                    MessageBox.Show("Вы неверно заполнили поля ФИО, либо не выбрали отдел!");
+                }
             }
         }
 
@@ -155,8 +178,9 @@ namespace EmployeeList_2._0
             same = SearchEmp(empFullName, ref requiredEmp, out bool isFired); 
             if (same) //если поиск успешен
             {
-                if (!isFired)
+                if (!isFired || oper == Program.Действия.Удалить.ToString())
                 {
+                    WriteLog($"Info. Cотрудник \"{requiredEmp.FullName}\" найден и доступен");
                     ButtonSearch.Enabled = false; //делаем кнопку поиска недоступной
                     if (oper == Program.Действия.Изменить.ToString())
                     {
@@ -169,11 +193,18 @@ namespace EmployeeList_2._0
                 }
                 FillTextBoxes(); //далее считываем данные сотрудника и заполняем соответствующие поля
                 mainForm.SelectRowInDataGrid(dataGrid, requiredEmp.Id); //выделяем найденную строку
-                if (isFired)
-                    MessageBox.Show($"Cотрудник \"{empFullName}\" уволен\rи больше не доступен для изменений!");
+                if (isFired && oper == Program.Действия.Изменить.ToString())
+                {
+                    WriteLog($"WARN. Cотрудник \"{requiredEmp.FullName}\" уволен и больше не доступен для изменений");
+                    MessageBox.Show($"Cотрудник \"{requiredEmp.FullName}\" уволен и больше не доступен для изменений!");
+                }    
             }
             else
+            {
+                WriteLog($"WARN. Cотрудника \"{empFullName}\" нет");
                 MessageBox.Show($"Cотрудника \"{empFullName}\" нет!");
+            }
+                
         }
 
         //Поиск сотрудника по ФИО
@@ -347,6 +378,18 @@ namespace EmployeeList_2._0
                 TextBoxSalary.Enabled = false;
                 ButtonOK.Enabled = false;
             }
+        }
+
+        public void WriteLog(string message)
+        {
+            StreamWriter sw = new StreamWriter(Program.mainLog, true);
+            sw.WriteLineAsync($"[{DateTime.Now.ToString()}] : {message}");
+            sw.Close();
+        }
+
+        private void FormAddChangeRemEmp_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            WriteLog($"Info. Форма сотрудников \"{Name}\" закрыта");
         }
     }
 }

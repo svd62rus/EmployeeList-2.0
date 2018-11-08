@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
+using System.Linq;
 using EmployeeList_2._0.EmpClasses;
 
 namespace EmployeeList_2._0
@@ -10,7 +12,7 @@ namespace EmployeeList_2._0
 
     [Serializable]
     //класс Список сотрудников
-    public class EmployeeList : IEnumerable
+    public class EmployeeList : IEnumerable, IEquatable<EmployeeList>
     {
         public List<Employee> Employees { get; set; } //cписок самих сотрудников
         public List<Department> Departments { get; set; } //список отделов
@@ -303,9 +305,131 @@ namespace EmployeeList_2._0
             return outStringList;
         }
 
+        //Копирование эмплой-листа в новый
+        public EmployeeList Copy()
+        {
+            var list = new EmployeeList
+            {
+                Departments = new List<Department>(),
+                Employees = new List<Employee>()
+            };
+            foreach (var elem in Departments)
+            {
+                Department newDep = new Department
+                {
+                    Id = elem.Id,
+                    Name = elem.Name,
+                    DateCreate = elem.DateCreate
+                };
+                list.Departments.Add(newDep);
+            }
+            foreach (var elem in Employees)
+            {
+                Employee newEmp = new Employee
+                {
+                    Id = elem.Id,
+                    Name = elem.Name,
+                    Surname = elem.Surname,
+                    Patronymic = elem.Patronymic,
+                    //FullName = elem.FullName,
+                    DepartmentId = elem.DepartmentId,
+                    IsFired = elem.IsFired,
+                    Salary = elem.Salary,
+                    DateHired = elem.DateHired,
+                    DateFired = elem.DateFired
+            };
+                list.Employees.Add(newEmp);
+            }
+            return list;
+        }
+
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return Departments.GetEnumerator();
+        }
+
+        //Операция сравнения емплой-листов
+        public bool Equals(EmployeeList other)
+        {
+            if (other == null)
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            bool result = true;
+            if (Departments.Count >= other.Departments.Count)
+            {
+                foreach (var elemOne in Departments)
+                {
+                    result = false;
+                    foreach (var elemTwo in other.Departments)
+                    {
+                        if (elemOne.Equals(elemTwo))
+                        {
+                            result = true;
+                            break;
+                        }
+
+                    }
+                    if (!result)
+                        break;
+                }
+            }
+            else
+            {
+                foreach (var elemOne in other.Departments)
+                {
+                    result = false;
+                    foreach (var elemTwo in Departments)
+                    {
+                        if (elemOne.Equals(elemTwo))
+                        {
+                            result = true;
+                            break;
+                        }
+                    }
+                    if (!result)
+                        break;
+                }
+            }
+            if (result)
+            {
+                if (Employees.Count >= other.Employees.Count)
+                {
+                    foreach (var elemOne in Employees)
+                    {
+                        result = false;
+                        foreach (var elemTwo in other.Employees)
+                        {
+                            if (elemOne.Equals(elemTwo))
+                            {
+                                result = true;
+                                break;
+                            }
+                        }
+                        if (!result)
+                            break;
+                    }
+                }
+                else
+                {
+                    foreach (var elemOne in other.Employees)
+                    {
+                        result = false;
+                        foreach (var elemTwo in Employees)
+                        {
+                            if (elemOne.Equals(elemTwo))
+                            {
+                                result = true;
+                                break;
+                            }
+                        }
+                        if (!result)
+                            break;
+                    }
+                }
+            }
+            return result;
         }
     }
 }

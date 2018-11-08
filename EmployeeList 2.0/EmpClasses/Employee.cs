@@ -4,7 +4,7 @@ namespace EmployeeList_2._0.EmpClasses
 {
     [Serializable]
     //класс Сотрудник
-    public class Employee
+    public class Employee : IEquatable<Employee>
     {
         public int Id { get; set; } //уник. Id - формируется в EmployeeList
         public string Name { get; set; } //имя
@@ -17,7 +17,9 @@ namespace EmployeeList_2._0.EmpClasses
         public DateTime DateHired { get; set; } //дата найма
         public DateTime? DateFired { get; set; } //дата увольнения
 
-
+        public Employee()
+        {
+        }
         public Employee(string surname, string name, string patronymic, int departmentId, double salary)
         {
             Name = name;
@@ -29,6 +31,20 @@ namespace EmployeeList_2._0.EmpClasses
             Salary = salary;
             DateHired = DateTime.Now;
             DateFired = null;
+        }
+
+        public bool Equals(Employee other)
+        {
+            if (other == null)
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            return Id.Equals(other.Id) && Name.Equals(other.Name) &&
+                   Surname.Equals(other.Surname) && Patronymic.Equals(other.Patronymic) &&
+                   /*FullName.Equals(other.FullName) &&*/
+                   DepartmentId.Equals(other.DepartmentId) && IsFired.Equals(other.IsFired) && 
+                   Salary.Equals(other.Salary) && DateHired.Equals(other.DateHired) && 
+                   DateFired.Equals(other.DateFired);
         }
     }
 }

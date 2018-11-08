@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.IO;
 
 namespace EmployeeList_2._0
 {
@@ -12,6 +13,7 @@ namespace EmployeeList_2._0
         public FormAddDep(EmployeeList list,Form1 mainForm, DataGridView dataGrid)
         {
             InitializeComponent();
+            WriteLog($"Info. Компоненты формы отделов \"{Name}\" инициализированы");
             this.list = list;
             this.mainForm = mainForm;
             this.dataGrid = dataGrid;
@@ -27,14 +29,21 @@ namespace EmployeeList_2._0
             var inputName = TextBoxDepName.Text; //название отдела в текстбоксе 
             if (list.Departments.Count > 0) //если кол-во отделов > 0
             {
-                if(CheckDub(inputName))
+                if (CheckDub(inputName))
+                {
+                    WriteLog($"Info. Отдел \"{inputName}\" добавлен");
                     MessageBox.Show($"Отдел \"{inputName}\" добавлен!");
+                }
                 else
-                    MessageBox.Show($"Отдел c именем \"{inputName}\" или похожим именем уже есть!");
+                {
+                    WriteLog($"WARN. Отдел c именем \"{inputName}\" или похожий уже есть");
+                    MessageBox.Show($"Отдел c именем \"{inputName}\" или похожий уже есть!");
+                }      
             }
             else //если отделов < 0 - добавить в любом случае
             {
                 AddAndShowChanges(inputName);
+                WriteLog($"Info. Отдел \"{inputName}\" добавлен");
                 MessageBox.Show($"Отдел \"{inputName}\" добавлен!");                
             }
                 
@@ -78,6 +87,18 @@ namespace EmployeeList_2._0
                 AddAndShowChanges(inputName);
 
             return !ident;
+        }
+
+        public void WriteLog(string message)
+        {
+            StreamWriter sw = new StreamWriter(Program.mainLog, true);
+            sw.WriteLineAsync($"[{DateTime.Now.ToString()}] : {message}");
+            sw.Close();
+        }
+
+        private void FormAddDep_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            WriteLog($"Info. Форма отделов \"{Name}\" закрыта");
         }
     }
 }

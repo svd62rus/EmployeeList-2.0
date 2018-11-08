@@ -74,6 +74,7 @@
             this.MinimizeBox = false;
             this.Name = "FormEmpFire";
             this.Text = "Уволить сотрудника";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormEmpFire_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -118,6 +118,7 @@
             this.MinimizeBox = false;
             this.Name = "FormChangeRemDep";
             this.Text = "ChangeRemove";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormChangeRemDep_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

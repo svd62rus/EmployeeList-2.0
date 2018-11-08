@@ -6,13 +6,17 @@ using System.Windows.Forms;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using EmployeeList_2._0.EmpClasses;
-using ExportManager;
 
 namespace EmployeeList_2._0
 {
     public partial class Form1 : Form, ILogger
     {
+        Regex sizeKbLogReg = new Regex(@"\s*LogSizeKb\s*=\s*\d+");
+        Regex sizeKbReg = new Regex(@"\d+");
+        public int LogSizeKb { get; set; }
+
         private EmployeeList list; //лист
+        private EmployeeList listTemp; //лист для проверки сохранения
 
         private const string _emptyDepField = "[не выбрано]"; //пустое поле комбобокса отделов на главной форме
 
@@ -31,12 +35,14 @@ namespace EmployeeList_2._0
         private string endingSingle = "а";
 
         //Регулярки для задания окончаний
-        Regex regexMany = new Regex(@"^\d*(1\d|0)$");  //проверка на цифру, после которой у слова будет окончание "ов"
+        Regex regexMany = new Regex(@"^\d*(1\d|0)$"); //проверка на цифру, после которой у слова будет окончание "ов"
         Regex regexSingle = new Regex(@"^\d*[2,3,4]$"); //-//- окончание "а"
 
         static private string nameOfFile = "List.dat"; //имя сохраняемого файла
-        static private string nameOfExportHired = "Работники";
-        static private string nameOfExportFired = "Уволенные";
+        private string nameOfExportHired = "Работники";
+        private string nameOfExportFired = "Уволенные";
+
+        private const string nameOfConfig = "employee_list.conf";
 
         public delegate void DisplayMethod<T>(DataGridView dataGrid, List<T> displayList); /*делегат для:
                                              - передачи метода вывода данных в таблицы
@@ -45,17 +51,81 @@ namespace EmployeeList_2._0
         private bool moreFilter = true;
         private bool lessFilter = false;
 
+
         public Form1()
         {
-            InitializeComponent();
             WriteLog("---Start Log---");
+            WriteLog("Info. Приложение запущено");
+            ReadConfig();
+            InitializeComponent();
             list = new EmployeeList(); //cоздаем экземпляр таблиц
+            listTemp = new EmployeeList();
+            //listTemp = list;
             DataGridAddColumns(); //добавляем столбцы
             SetDataGridParams(DataGridDeps); //устанавливаем параметры датагрида отделов           
             SetDataGridParams(DataGridEmps); //устанавливаем параметры датагрида сотрудников
             SetInfoLabelText(); //устанавливаем дефолтный текст в инфо-лейблах
             ComboBoxDeps.DropDownStyle = ComboBoxStyle.DropDownList; //делаем комбобокс нередактируемым
             TextBoxMaxSalary.Enabled = false;
+        }
+
+        private void ReadConfig()
+        {
+            try
+            {
+                StreamReader sr = new StreamReader(nameOfConfig);
+                while (!sr.EndOfStream)
+                {
+                    var str = sr.ReadLine();
+                    MatchCollection matchesOne = sizeKbLogReg.Matches(str);
+                    if (matchesOne.Count > 0)
+                    {
+                        foreach (Match match in matchesOne)
+                        {
+                            MatchCollection matchesTwo = sizeKbReg.Matches(match.ToString());
+                            foreach (Match matchTwo in matchesTwo)
+                            {
+                                LogSizeKb = int.Parse(matchTwo.ToString());
+                                WriteLog($"Info. Файл {nameOfConfig} прочитан");
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        LogSizeKb = Program.defaultLogSize;
+                        sr.Close();
+                        ResetConfig();
+                        WriteLog($"WARN. Нет нужных параметров в {nameOfConfig} Файл конфигурации перезаписан в default");
+                        break;
+                    }
+                }
+                sr.Close();
+
+            }
+            catch (Exception ex)
+            {
+                LogSizeKb = Program.defaultLogSize;
+                ResetConfig();
+                WriteLog($"ERROR. Невозможно прочитать {nameOfConfig}. Ошибка: {ex.Message}");
+                WriteLog($"Info. Файл конфигурации перезаписан в default");
+            }
+
+        }
+
+        private void ResetConfig()
+        {
+            try
+            {
+                StreamWriter sw = new StreamWriter(nameOfConfig, false);
+                sw.WriteLineAsync($"LogSizeKb = {Program.defaultLogSize}");
+                sw.Close();
+            }
+            catch (Exception ex)
+            {
+                WriteLog($"ERROR. Невозможно перезаписать {nameOfConfig}. Ошибка: {ex.Message}");
+            }
+
         }
 
         //Добавление столбцов
@@ -72,8 +142,8 @@ namespace EmployeeList_2._0
             DataGridEmps.Columns.Add("Department", "Отдел");
             DataGridEmps.Columns.Add("DateHired", "Нанят");
             DataGridEmps.Columns.Add("DateFired", "Уволен");
-            WriteLog("Columns add.");
         }
+
         //Установка параметров датагрида
         private void SetDataGridParams(DataGridView dataGrid)
         {
@@ -81,8 +151,8 @@ namespace EmployeeList_2._0
             dataGrid.RowHeadersVisible = false;
             dataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGrid.MultiSelect = false;
-            WriteLog("DataGrid parameters set.");
         }
+
         //Установка дефолтного текста в инфо-лейблах
         private void SetInfoLabelText()
         {
@@ -92,10 +162,10 @@ namespace EmployeeList_2._0
             SumOfDepSalary.Text = sumOfDepSalaryTitle + noDataString;
             AvgOfDepSalary.Text = avgOfDepSalaryTitle + noDataString;
             CountOfDepEmp.Text = countOfDepEmpTitle + noDataString;
-            WriteLog("Info label text set.");
         }
+
         //Заполнение комбобокса отделов
-        private void FillDepsList(List<EmpClasses.Department> depList)
+        private void FillDepsList(List<Department> depList)
         {
             int selectedIndex = 0;
             int count = ComboBoxDeps.Items.Count;
@@ -105,22 +175,23 @@ namespace EmployeeList_2._0
             AddDefaultSelect(); //добавляем пустое поле по умолчанию
             for (int i = 0; i < depList.Count; i++)
             {
-                var currentIndex = ComboBoxDeps.Items.Add(depList[i].Id + ". " + depList[i].Name); //добавляем отдел в комбобокс
+                var currentIndex =
+                    ComboBoxDeps.Items.Add(depList[i].Id + ". " + depList[i].Name); //добавляем отдел в комбобокс
                 if (currentIndex == selectedIndex)
                     isCurrentItem = true;
             }
+
             if (isCurrentItem)
                 if (count > 0)
                     ComboBoxDeps.SelectedIndex = selectedIndex; //оставляем текущий выбранным
-            WriteLog($"Fill department combobox. Count of departments = {count}.");
         }
+
         //Добавление пункта по-умолчанию в список отделов
         private void AddDefaultSelect()
         {
             ComboBoxDeps.Items.Clear();
             ComboBoxDeps.Items.Add(_emptyDepField); //добавляем пункт по умолчанию
             ComboBoxDeps.SelectedIndex = 0; //его индекс нулевой 
-            WriteLog("Add default item in department combobox.");
         }
 
         //Обновление отделов
@@ -128,25 +199,24 @@ namespace EmployeeList_2._0
         {
             Display(dataGrid, displayList);
             FillDepsList(list.Departments);
-            WriteLog("Departments refresh.");
         }
+
         //Обновление сотрудников
         public void RefreshMainForm(DataGridView dataGrid, List<Employee> displayList)
         {
             ClearFilterTexBoxes();
             Display(dataGrid, displayList);
             RefreshTotalInfo();
-            FillDepsList(list.Departments);
-            WriteLog("Employeers refresh.");
+            //FillDepsList(list.Departments);
         }
+
         //Очистка датагрида
         private void ClearDataGrid(DataGridView dataGrid)
         {
             if (dataGrid.Rows.Count > 1)
             {
                 dataGrid.Rows.Clear(); //очищаем датагрид
-                WriteLog($"Datagrid \"{dataGrid.Name}\" clear. Count of row in datagrid = {dataGrid.Rows.Count}");
-            }     
+            }
         }
 
         //Вывод отделов
@@ -158,8 +228,8 @@ namespace EmployeeList_2._0
                 string[] row = { el.Id.ToString(), el.Name, el.DateCreate.ToLongDateString() };
                 dataGrid.Rows.Add(row); //добавляем массив строк в датагрид
             }
-            WriteLog($"Department is display. Count of department = {depList.Count}.");
         }
+
         //Вывод сотрудников
         public void Display(DataGridView dataGrid, List<Employee> empList)
         {
@@ -169,12 +239,15 @@ namespace EmployeeList_2._0
                 string salary = string.Empty;
                 if (!el.IsFired)
                     salary = string.Format($"{el.Salary:F2}");
-                string[] row = { el.Id.ToString(), el.FullName, salary, MakeDepName(el),
-                    el.DateHired.ToLongDateString(), MakeDateFired(el)};
+                string[] row =
+                {
+                    el.Id.ToString(), el.FullName, salary, MakeDepName(el),
+                    el.DateHired.ToLongDateString(), MakeDateFired(el)
+                };
                 dataGrid.Rows.Add(row); //добавляем массив строк в датагрид
             }
-            WriteLog($"Employeers is display. Count of employeers = {empList.Count}.");
         }
+
         //Cоздание строки с датой увольнения
         private string MakeDateFired(Employee emp)
         {
@@ -182,12 +255,12 @@ namespace EmployeeList_2._0
             if (emp.DateFired != null)
             {
                 dateFired = (DateTime)emp.DateFired;
-                WriteLog($"Employee \"{emp.FullName}\". Date of fired = {dateFired.ToLongDateString()}.");
                 return dateFired.ToLongDateString();
             }
             else
                 return emp.DateFired.ToString();
         }
+
         //Cоздание строки с именем отдела
         private string MakeDepName(Employee emp)
         {
@@ -195,38 +268,50 @@ namespace EmployeeList_2._0
             {
                 if (elem.Id == emp.DepartmentId)
                 {
-                    WriteLog($"String with name of department #{elem.Id} created.");
                     return elem.Name;
                 }
-                    
+
             }
 
             return null;
         }
+
         //Файл-Загрузить
         private void ToolStripMenuLoad_Click(object sender, EventArgs e)
         {
-            var ex = LoadTables(ref list, Display, Display);//загружаем файл в программу
-            if (ex == null)
+            bool newLoad = true;
+            if (!listTemp.Equals(list))
             {
-                //убираем выделения строк
-                DataGridDeps.ClearSelection();
-                DataGridEmps.ClearSelection();
-                WriteLog($".dat file is loaded.");
+                var logMessage = SaveWhenChanged(ref newLoad);
+                WriteLog(logMessage);
             }
-            else
+            if (newLoad)
             {
-                WriteLog($".dat file is not loaded. ERROR: {ex.Message}");
-                MessageBox.Show($"Загрузка невозможна. Ошибка: {ex.Message}");
+                var ex = LoadTables(ref list, Display, Display); //загружаем файл в программу
+                if (ex == null)
+                {
+                    listTemp = list.Copy();
+                    WriteLog($"Info. Файл {nameOfFile} успешно загружен");
+                    //убираем выделения строк
+                    DataGridDeps.ClearSelection();
+                    DataGridEmps.ClearSelection();
+                }
+                else
+                {
+                    WriteLog($"ERROR. Файл {nameOfFile} не может быть загружен. Ошибка: {ex.Message}");
+                    MessageBox.Show($"Загрузка невозможна. Ошибка: {ex.Message}");
+                }
             }
-                
         }
+
         //Загрузка
         private Exception LoadTables(ref EmployeeList list, DisplayMethod<Department> displayDeps,
             DisplayMethod<Employee> displayEmps)
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple;
+            BinaryFormatter formatter = new BinaryFormatter
+            {
+                AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple
+            };
             try
             {
                 using (FileStream fs = new FileStream(nameOfFile, FileMode.Open))
@@ -240,32 +325,37 @@ namespace EmployeeList_2._0
             {
                 return ex;
             }
+
             RefreshTotalInfo(); //обновляем общую инфу
             FillDepsList(list.Departments); //заполняем список отделов
-            WriteLog("Data load success.");
             return null;
         }
+
         //Файл-Сохранить
         private void ToolStripMenuSave_Click(object sender, EventArgs e)
         {
             var ex = SaveTables(list); //сохраняем изменения в файл
             if (ex == null)
             {
-                WriteLog(".dat is save.");
+                listTemp = list;
+                WriteLog($"Info. Файл {nameOfFile} успешно сохранен");
                 MessageBox.Show("Данные сохранены!");
             }
-                
+
             else
             {
-                WriteLog($".dat file is not save. ERROR: {ex.Message}");
+                WriteLog($"ERROR. Файл {nameOfFile} не может быть сохранен. Ошибка: {ex.Message}");
                 MessageBox.Show($"Сохранение невозможно. Ошибка: {ex.Message}");
             }
         }
+
         //Сохранение
         static Exception SaveTables(EmployeeList list)
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple;
+            BinaryFormatter formatter = new BinaryFormatter
+            {
+                AssemblyFormat = System.Runtime.Serialization.Formatters.FormatterAssemblyStyle.Simple
+            };
             try
             {
                 using (FileStream fs = new FileStream(nameOfFile, FileMode.OpenOrCreate))
@@ -277,6 +367,7 @@ namespace EmployeeList_2._0
             {
                 return ex;
             }
+
             return null;
         }
 
@@ -284,7 +375,6 @@ namespace EmployeeList_2._0
         private void AnyChildFormClosed(object sender, EventArgs e)
         {
             Enabled = true;
-            WriteLog("Form 1 is enabled.");
         }
 
         //Обновление общей информации
@@ -302,7 +392,6 @@ namespace EmployeeList_2._0
                 AvgSalary.Text = avgOfSalaryTitle + noDataString;
                 CountOfEmp.Text = countOfEmpTitle + noDataString;
             }
-            WriteLog($"Total info refresh. Count of employees = {list.Employees.Count}.");
         }
 
         //Выделение конкретной строки с данными
@@ -311,32 +400,38 @@ namespace EmployeeList_2._0
             dataGrid.Rows[numOfRow - 1].Selected = true;
             dataGrid.FirstDisplayedScrollingRowIndex = numOfRow - 1;
             dataGrid.Update();
-            WriteLog($"Row #{numOfRow-1} selected.");
         }
 
         //Cоздание дочерней формы отделов и переключение на нее
         private void ShowChildFormDep(string operation)
         {
             Enabled = false;
-            var childForm = new FormChangeRemDep(list, this, DataGridDeps, DataGridEmps, operation); //создаем форму изменения/удаления отдела
+            var childForm =
+                new FormChangeRemDep(list, this, DataGridDeps, DataGridEmps,
+                    operation); //создаем форму изменения/удаления отдела
             childForm.Show(); //показываем новую форму
-            childForm.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
-            WriteLog($"Child departments form \"{childForm.Name}\" created and activate.");
+            childForm.FormClosed +=
+                new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
+            WriteLog($"Info. Форма отделов \"{childForm.Name}\" активирована");
         }
+
         //Отделы-Добавить
         private void MenuAddDep_Click(object sender, EventArgs e)
         {
             Enabled = false;
             var formAddDep = new FormAddDep(list, this, DataGridDeps); //создаем форму добавления отдела
             formAddDep.Show(); //показываем новую форму
-            formAddDep.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
-            WriteLog($"Child departments form \"{formAddDep.Name}\" created and activate.");
+            formAddDep.FormClosed +=
+                new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
+            WriteLog($"Info. Форма отделов \"{formAddDep.Name}\" активирована");
         }
+
         //Отделы-Изменить
         private void MenuChangeDep_Click(object sender, EventArgs e)
         {
             ShowChildFormDep(Program.Действия.Изменить.ToString()); //вызываем дочернюю форму
         }
+
         //Отделы-Удалить
         private void MenuRemoveDep_Click(object sender, EventArgs e)
         {
@@ -349,11 +444,15 @@ namespace EmployeeList_2._0
         {
             RefreshMainForm(DataGridEmps, list.Employees);
             Enabled = false;
-            var childForm = new FormAddChangeRemEmp(list, this, DataGridEmps, operation); //создаем форму добавления/изменения/удаления отдела
+            var childForm =
+                new FormAddChangeRemEmp(list, this, DataGridEmps,
+                    operation); //создаем форму добавления/изменения/удаления отдела
             childForm.Show(); //показываем новую форму
-            childForm.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы 
-            WriteLog($"Child employee form \"{childForm.Name}\" created and activate.");
+            childForm.FormClosed +=
+                new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы 
+            WriteLog($"Info. Форма сотрудников \"{childForm.Name}\" активирована");
         }
+
         //Cотрудники-Добавить
         private void MenuAddEmp_Click(object sender, EventArgs e)
         {
@@ -361,11 +460,12 @@ namespace EmployeeList_2._0
                 ShowChildFormEmp(Program.Действия.Добавить.ToString()); //вызываем дочернюю форму
             else
             {
-                WriteLog("ERROR: not departments for add employee.");
+                WriteLog("WARN. Нет отделов для добавления сотрудника");
                 MessageBox.Show($"Нет отделов для добавления сотрудника!");
             }
-                
+
         }
+
         //Сотрудники-Изменить
         private void MenuChangeEmp_Click(object sender, EventArgs e)
         {
@@ -373,11 +473,12 @@ namespace EmployeeList_2._0
                 ShowChildFormEmp(Program.Действия.Изменить.ToString()); //вызываем дочернюю форму
             else
             {
-                WriteLog("ERROR: not employeers for change.");
+                WriteLog("WARN. Нет сотрудников для изменения");
                 MessageBox.Show($"Нет сотрудников для изменения!");
             }
-                
+
         }
+
         //Сотрудники-Удалить
         private void MenuRemoveEmp_Click(object sender, EventArgs e)
         {
@@ -385,9 +486,9 @@ namespace EmployeeList_2._0
                 ShowChildFormEmp(Program.Действия.Удалить.ToString()); //вызываем дочернюю форму
             else
             {
-                WriteLog("ERROR: not employeers for remove.");
+                WriteLog("WARN. Нет сотрудников для удаления");
                 MessageBox.Show($"Нет сотрудников для удаления!");
-            }      
+            }
         }
 
         //Cоздание дочерней формы cотрудников и переключение на нее
@@ -396,8 +497,9 @@ namespace EmployeeList_2._0
             Enabled = false;
             var childForm = new FormEmpFire(list, this, DataGridEmps); //создаем форму увольнения сотрудника
             childForm.Show(); //показываем новую форму
-            childForm.FormClosed += new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
-            WriteLog($"Child employee form \"{childForm.Name}\" created and activate.");
+            childForm.FormClosed +=
+                new FormClosedEventHandler(AnyChildFormClosed); //подписываемся на событие закрытия дочерней формы
+            WriteLog($"Info. Форма сотрудников \"{childForm.Name}\" активирована");
         }
 
         //Вывод данных по отделу
@@ -405,17 +507,18 @@ namespace EmployeeList_2._0
         {
             if (ComboBoxDeps.SelectedItem.ToString() != _emptyDepField)
             {
+                WriteLog(
+                    $"Info. В списке выбора отдела для вывода данных был выбран отдел \"{ComboBoxDeps.SelectedItem.ToString()}\"");
                 SelectRowInDataGrid(DataGridDeps, ComboBoxDeps.SelectedIndex);
-                WriteLog($"Select {ComboBoxDeps.SelectedItem.ToString()}.");
                 SetDepInfoLabelText(); //устанавливаем значение инфо-лейблов отдела
             }
             else
             {
-                WriteLog($"Select none.");
                 DataGridDeps.ClearSelection();
                 NotDataMessage();
             }
         }
+
         //Установка значений инфо-лейблов отдела
         private void SetDepInfoLabelText()
         {
@@ -433,15 +536,14 @@ namespace EmployeeList_2._0
                 CountOfDepEmp.Text = countOfDepEmpTitle + list.CountOfEmp(ComboBoxDeps.SelectedIndex);
             else
                 NotDataMessage(); //выводим сообщение об отсутствии данных
-            WriteLog("Department info labels set.");
         }
+
         //Вывод сообщения об отсуствии данных для отдела
         private void NotDataMessage()
         {
             SumOfDepSalary.Text = sumOfDepSalaryTitle + noDataString;
             AvgOfDepSalary.Text = avgOfDepSalaryTitle + noDataString;
             CountOfDepEmp.Text = countOfDepEmpTitle + noDataString;
-            WriteLog("Not data message show.");
         }
 
         //Кол-во сотрудников по отделам
@@ -450,18 +552,19 @@ namespace EmployeeList_2._0
             string output = string.Empty;
             if (list.Departments.Count > 0)
             {
+                WriteLog("Info. Вывод кол-ва сотрудников по отделам");
                 foreach (var el in list.CountOfEmpPerDep())
                 {
                     string ending = CheckEndingOfWord(el); //задаем окончание слова
                     output += String.Format($"Отдел \"{el.Key}\": {el.Value} cотрудник{ending}.\r");
-                    WriteLog("Employeers per department show.");
                 }
             }
             else
             {
-                WriteLog("ERROR: not department.");
+                WriteLog("WARN. Отделов для подсчета кол-ва сотрудников нет");
                 output = "Нет отделов";
-            }    
+            }
+
             MessageBox.Show(output);
         }
 
@@ -476,15 +579,13 @@ namespace EmployeeList_2._0
                 if (regexSingle.IsMatch(elem.Value.ToString()))
                     ending = endingSingle;
             }
-            WriteLog("Ending of word after digit success.");
+
             return ending;
         }
 
         //Выход
         private void MenuExit_Click(object sender, EventArgs e)
         {
-            WriteLog("Exit from app.");
-            WriteLog("---End Log---");
             Close();
         }
 
@@ -493,17 +594,18 @@ namespace EmployeeList_2._0
         {
             if (CheckFilters(out List<Employee> emps))
             {
-                WriteLog("Filter apply.");
+                WriteLog($"Info. К списку сотрудников применен фильтр");
                 Display(DataGridEmps, emps);
             }
 
             else
             {
-                WriteLog("ERROR: wrong filter value.");
+                WriteLog("WARN. Неверное значение фильтра");
                 MessageBox.Show("Неверное знач-е фильтра!");
             }
-                
+
         }
+
         //Проверка фильтров
         private bool CheckFilters(out List<Employee> emps)
         {
@@ -513,7 +615,6 @@ namespace EmployeeList_2._0
             {
                 strSalary = TextBoxMinSalary.Text;
                 strMaxSalary = TextBoxMaxSalary.Text;
-                WriteLog("Check filter success.");
                 bool result = CheckAndCallRangeFilter(strSalary, strMaxSalary, out List<Employee> employees);
                 emps = employees;
                 return result;
@@ -521,20 +622,19 @@ namespace EmployeeList_2._0
             else
             {
                 strSalary = moreFilter ? TextBoxMinSalary.Text : TextBoxMaxSalary.Text;
-                WriteLog("Check filter success.");
                 bool result = CheckAndCallSimpleFilter(strSalary, out List<Employee> employees);
                 emps = employees;
-                
+
                 return result;
             }
         }
+
         //Проверка и вызов фильтра по диапазону
         private bool CheckAndCallRangeFilter(string strSalary, string strMaxSalary, out List<Employee> employees)
         {
             if (double.TryParse(strSalary, out double minSalary) && double.TryParse(strMaxSalary, out double maxSalary))
             {
                 var filterObj = new FilterClass(minSalary, maxSalary);
-                WriteLog($"Range filter activate. Min salary = {minSalary}; Max salary = {maxSalary}.");
                 employees = CallFilter(filterObj);
                 return true;
             }
@@ -544,12 +644,12 @@ namespace EmployeeList_2._0
                 return false;
             }
         }
+
         //Проверка и вызов фильтра по одной стороне (простой)
         private bool CheckAndCallSimpleFilter(string strSalary, out List<Employee> employees)
         {
             if (double.TryParse(strSalary, out double salary))
             {
-                WriteLog($"Simple filter activate. Salary = {salary}.");
                 var filterObj = new FilterClass(moreFilter, lessFilter, salary);
                 employees = CallFilter(filterObj);
                 return true;
@@ -560,51 +660,59 @@ namespace EmployeeList_2._0
                 return false;
             }
         }
+
         //Вызов фильтра
         private List<Employee> CallFilter(FilterClass filterObj)
         {
             var tempList = list;
-            WriteLog("Filter calling.");
             return tempList.EmployeeFilter(tempList.SalaryFilter, filterObj);
         }
+
         //Сброс фильтра
         private void ButtonResetFilter_Click(object sender, EventArgs e)
         {
+            WriteLog($"Info. Фильтр сброшен");
             RefreshMainForm(DataGridEmps, list.Employees);
             RadioButtonMore.Checked = true;
         }
+
         //Выбран фильтр "больше"
         private void RadioButtonMore_CheckedChanged(object sender, EventArgs e)
         {
+            WriteLog($"Info. Выбран фильтр \"зарплата-больше\"");
             moreFilter = true;
             lessFilter = false;
             TextBoxMinSalary.Enabled = true;
             TextBoxMaxSalary.Enabled = false;
             TextBoxMaxSalary.Clear();
         }
+
         //Выбран фильтр "меньше"
         private void RadioButtonLess_CheckedChanged(object sender, EventArgs e)
         {
+            WriteLog($"Info. Выбран фильтр \"зарплата-меньше\"");
             moreFilter = false;
             lessFilter = true;
             TextBoxMaxSalary.Enabled = true;
             TextBoxMinSalary.Enabled = false;
             TextBoxMinSalary.Clear();
         }
+
         //Выбран фильтр "диапазон"
         private void RadioButtonRange_CheckedChanged(object sender, EventArgs e)
         {
+            WriteLog($"Info. Выбран фильтр \"зарплата-диапазон\"");
             moreFilter = true;
             lessFilter = true;
             TextBoxMaxSalary.Enabled = true;
             TextBoxMinSalary.Enabled = true;
         }
+
         //Очистка текстбоксов фильтра
         private void ClearFilterTexBoxes()
         {
             TextBoxMinSalary.Clear();
             TextBoxMaxSalary.Clear();
-            WriteLog("TextBoxex of filter clear.");
         }
 
         //Cброс выделения кнопок сортировок
@@ -618,51 +726,53 @@ namespace EmployeeList_2._0
             ButtonSort09.ForeColor = Color.Black;
             ButtonSort90.BackColor = Color.Transparent;
             ButtonSort90.ForeColor = Color.Black;
-            WriteLog("Reset color of sort buttons.");
         }
+
         //Cортировка А-Я
         private void ButtonSortAZ_Click(object sender, EventArgs e)
         {
+            WriteLog("Info. Выбран фильтр сортировки ФИО по алфавиту");
             ClearFilterTexBoxes();
             ResetColorOfSortButton();
             ButtonSortAZ.BackColor = Color.DeepSkyBlue;
             ButtonSortAZ.ForeColor = Color.White;
             list.SortEmp((int)Program.Сортировка.Алфавит);
-            WriteLog("A-Z sort activated.");
             Display(DataGridEmps, list.Employees);
         }
+
         //Cортировка Я-А
         private void ButtonSortZA_Click(object sender, EventArgs e)
         {
+            WriteLog("Info. Выбран фильтр сортировки ФИО по алфавиту в обратном порядке");
             ClearFilterTexBoxes();
             ResetColorOfSortButton();
             ButtonSortZA.BackColor = Color.DeepSkyBlue;
             ButtonSortZA.ForeColor = Color.White;
             list.SortEmp((int)Program.Сортировка.Алфавитобратная);
-            WriteLog("Z-A sort activated.");
             Display(DataGridEmps, list.Employees);
         }
 
         //Cортировка 0-9
         private void ButtonSort09_Click(object sender, EventArgs e)
         {
+            WriteLog("Info. Выбран фильтр сортировки зарплаты по возрастанию");
             ClearFilterTexBoxes();
             ResetColorOfSortButton();
             ButtonSort09.BackColor = Color.DeepSkyBlue;
             ButtonSort09.ForeColor = Color.White;
             list.SortEmp((int)Program.Сортировка.Позарплате);
-            WriteLog("0-9 sort activated.");
             Display(DataGridEmps, list.Employees);
         }
+
         //Cортировка 9-0
         private void ButtonSort90_Click(object sender, EventArgs e)
         {
+            WriteLog("Info. Выбран фильтр сортировки зарплаты по убыванию");
             ClearFilterTexBoxes();
             ResetColorOfSortButton();
             ButtonSort90.BackColor = Color.DeepSkyBlue;
             ButtonSort90.ForeColor = Color.White;
             list.SortEmp((int)Program.Сортировка.Позарплатеобратная);
-            WriteLog("9-0 sort activated.");
             Display(DataGridEmps, list.Employees);
         }
 
@@ -673,68 +783,142 @@ namespace EmployeeList_2._0
                 ShowChildFormEmp(); //вызываем дочернюю форму
             else
             {
-                WriteLog("ERROR: not employeers for fired.");
+                WriteLog("WARN: Нет сотрудников для увольнения");
                 MessageBox.Show($"Нет сотрудников для увольнения!");
             }
-                
+
         }
+
         //Экспорт-Работники
         private void MenuExportHire_Click(object sender, EventArgs e)
         {
-            if (list.Employees.Count > 0)
-            {
-                Export export = new Export(nameOfExportHired, list.FullNames(list.CheckEmpType, true));
-                var resOfExport = export.WriteFile();
-                if (resOfExport == null)
-                {
-                    WriteLog($"File export success in \"{nameOfExportHired}\".");
-                    MessageBox.Show("Файл экспортирован!");
-                }   
-                else
-                {
-                    WriteLog($"File is not export. ERROR: {resOfExport.Message}");
-                    MessageBox.Show($"Экспорт невозможен. Ошибка {resOfExport.Message}");
-                }
-            }
-            else
-            {
-                WriteLog($"ERROR: not employeers for export.");
-                MessageBox.Show($"Нет сотрудников для экспорта!");
-            }
-                
+            string message = Export(nameOfExportHired, true, out string logString);
+            WriteLog(logString);
+            MessageBox.Show(message);
+
         }
+
         //Экспорт-Уволенные
         private void MenuExportFire_Click(object sender, EventArgs e)
         {
+            string message = Export(nameOfExportFired, false, out string logString);
+            WriteLog(logString);
+            MessageBox.Show(message);
+
+        }
+        //Экспорт
+        private string Export(string nameOfExport, bool typeOfExport, out string logString)
+        {
             if (list.Employees.Count > 0)
             {
-                Export export = new Export(nameOfExportFired, list.FullNames(list.CheckEmpType, false));
-                var resOfExport = export.WriteFile();
-                if (resOfExport == null)
+                try
                 {
-                    WriteLog($"File export success in \"{nameOfExportFired}\".");
-                    MessageBox.Show("Файл экспортирован!");
+                    var checkAndCallDll = new CheckingExportDllClass(list, nameOfExport, typeOfExport);
+                    string message = checkAndCallDll.CallExport(out string logMessage);
+                    logString = logMessage;
+                    return message;
                 }
-                    
-                else
+                catch (Exception ex)
                 {
-                    WriteLog($"File is not export. ERROR: {resOfExport.Message}");
-                    MessageBox.Show($"Экспорт невозможен. Ошибка {resOfExport.Message}");
+                    logString =
+                        $"FATAL. Функция экспорта недоступна. Отсутствует библиотека ExportManager.dll Ошибка: {ex.Message}";
+                    return $"Функция экспорта недоступна. Отсутствует библиотека ExportManager.dll";
                 }
             }
             else
             {
-                WriteLog($"ERROR: not employeers for export.");
-                MessageBox.Show($"Нет сотрудников для экспорта!");
+                logString = "WARN. Нет сотрудников для экспорта";
+                return $"Нет сотрудников для экспорта!";
             }
-                
         }
 
         public void WriteLog(string message)
         {
-            StreamWriter sw = new StreamWriter(Program.mainLog,true);
+            StreamWriter sw = new StreamWriter(Program.mainLog, true);
             sw.WriteLineAsync($"[{DateTime.Now.ToString()}] : {message}");
             sw.Close();
+            //FileInfo file = new FileInfo(Program.mainLog);
+            //if(file.Length/Program.bytePerKb >= Program.logSizeKb)
+            //    File.Delete(Program.mainLog);
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            WriteLog("Info. Выход из приложения");
+            WriteLog("---End Log---");
+        }
+
+        //Действия при закрытии приложения
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!listTemp.Equals(list))
+            {
+                var logMessage = SaveWhenChanged(e);
+                WriteLog(logMessage);
+            }
+        }
+
+        //Сохранение при изменениях
+        private string SaveWhenChanged(FormClosingEventArgs e)
+        {
+            string logMessage = string.Empty;
+            switch (MessageBox.Show("Вы хотите сохранить изменения?", "Внимание!", MessageBoxButtons.YesNoCancel))
+            {
+
+                case DialogResult.Cancel:
+                    logMessage = "Info. Выход из приложения отменен";
+                    e.Cancel = true;
+                    break;
+                case DialogResult.No:
+                    logMessage = "Info. Сохранение изменений отклонено";
+                    break;
+                case DialogResult.Yes:
+                    logMessage = "Info. Изменения будут сохранены";
+                    var ex = SaveTables(list);
+                    if (ex == null)
+                    {
+                        logMessage = $"Info. Файл {nameOfFile} успешно сохранен";
+                    }
+                    else
+                    {
+                        logMessage = $"ERROR. Файл {nameOfFile} не может быть сохранен. Ошибка: {ex.Message}";
+                        MessageBox.Show($"Сохранение невозможно. Ошибка: {ex.Message}");
+                        e.Cancel = true;
+                    }
+                    break;
+            }
+            return logMessage;
+        }
+        private string SaveWhenChanged(ref bool newLoad)
+        {
+            string logMessage = string.Empty;
+            switch (MessageBox.Show("Вы хотите сохранить изменения?", "Внимание!", MessageBoxButtons.YesNoCancel))
+            {
+                case DialogResult.Cancel:
+                    logMessage = "Info. Загрузка нового файла отменена";
+                    newLoad = false;
+                    break;
+                case DialogResult.No:
+                    logMessage = "Info. Сохранение изменений отклонено";
+                    newLoad = true;
+                    break;
+                case DialogResult.Yes:
+                    logMessage = "Info. Изменения будут сохранены";
+                    var ex = SaveTables(list);
+                    if (ex == null)
+                    {
+                        logMessage = $"Info. Файл {nameOfFile} успешно сохранен";
+                        newLoad = true;
+                    }
+                    else
+                    {
+                        logMessage = $"ERROR. Файл {nameOfFile} не может быть сохранен. Ошибка: {ex.Message}";
+                        newLoad = false;
+                        MessageBox.Show($"Сохранение невозможно. Ошибка: {ex.Message}");
+                    }
+                    break;
+            }
+            return logMessage;
         }
     }
 }

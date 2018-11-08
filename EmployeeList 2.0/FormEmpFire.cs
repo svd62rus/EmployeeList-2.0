@@ -1,11 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using EmployeeList_2._0.EmpClasses;
 
 namespace EmployeeList_2._0
 {
-    public partial class FormEmpFire : Form
+    public partial class FormEmpFire : Form, ILogger
     {
         private const string _emptyDepField = "[не выбрано]"; //пустое поле комбобокса сотрудников
 
@@ -16,6 +17,7 @@ namespace EmployeeList_2._0
         public FormEmpFire(EmployeeList list, Form1 mainForm, DataGridView dataGrid)
         {
             InitializeComponent();
+            WriteLog($"Info. Компоненты формы сотрудников \"{Name}\" инициализированы");
             this.list = list;
             this.mainForm = mainForm;
             this.dataGrid = dataGrid;
@@ -47,7 +49,8 @@ namespace EmployeeList_2._0
                     mainForm.RefreshMainForm(dataGrid,list.Employees);
                     mainForm.SelectRowInDataGrid(dataGrid,elem.Id);
                     mainForm.RefreshTotalInfo();
-                    MessageBox.Show($"Cотрудник {elem.FullName} уволен!");
+                    WriteLog($"Info. Cотрудник \"{elem.FullName}\" уволен");
+                    MessageBox.Show($"Cотрудник \"{elem.FullName}\" уволен!");
                     break;
                 }
             }
@@ -59,6 +62,18 @@ namespace EmployeeList_2._0
                 ButtonOK.Enabled = true;
             else
                 ButtonOK.Enabled = false;
+        }
+
+        public void WriteLog(string message)
+        {
+            StreamWriter sw = new StreamWriter(Program.mainLog, true);
+            sw.WriteLineAsync($"[{DateTime.Now.ToString()}] : {message}");
+            sw.Close();
+        }
+
+        private void FormEmpFire_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            WriteLog($"Info. Форма сотрудников \"{Name}\" закрыта");
         }
     }
 }

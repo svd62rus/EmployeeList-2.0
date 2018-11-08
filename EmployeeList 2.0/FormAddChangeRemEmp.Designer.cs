@@ -178,6 +178,7 @@
             this.MinimizeBox = false;
             this.Name = "FormAddChangeRemEmp";
             this.Text = "AddChange";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormAddChangeRemEmp_FormClosed);
             this.ResumeLayout(false);
             this.PerformLayout();
 

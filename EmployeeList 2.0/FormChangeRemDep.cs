@@ -1,10 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using EmployeeList_2._0.EmpClasses;
 
 namespace EmployeeList_2._0
 {
-    public partial class FormChangeRemDep : Form
+    public partial class FormChangeRemDep : Form, ILogger
     {
         private EmployeeList list; //лист таблиц
         private Form1 mainForm; //главная форма для обновления
@@ -20,6 +21,7 @@ namespace EmployeeList_2._0
         public FormChangeRemDep(EmployeeList list, Form1 mainForm, DataGridView dataGrid, DataGridView dataGridEmp,string operation)
         {
             InitializeComponent();
+            WriteLog($"Info. Компоненты формы отделов \"{Name}\" инициализированы");
             oper = operation;
             Text = oper + " " + dep; //задаем заголовок формы
             labelDepIdOrName.Text += oper.ToLower(); //задаем окончание текста лейбла
@@ -46,12 +48,20 @@ namespace EmployeeList_2._0
             }
             else
                 same = SearchDep(strId, ref requiredDep); //ищем отдел  
+
             if (!same && isInt)
+            {
+                WriteLog($"WARN. Отдела №{id} нет");
                 MessageBox.Show($"Отдела №{id} нет!");
+            }
             if (!same && !isInt)
+            {
+                WriteLog($"WARN. Отдела c именем \"{strId}\" нет");
                 MessageBox.Show($"Отдела c именем \"{strId}\" нет!");
+            }
             if (same) //при нахождении отдела, изменяем доступность элементов формы
             {
+                WriteLog($"Info. Отдел найден");
                 mainForm.SelectRowInDataGrid(dataGrid,requiredDep.Id);
                 TextBoxDesiredDep.Text = requiredDep.Name;
                 TextBoxDesiredDep.Enabled = false;
@@ -129,13 +139,17 @@ namespace EmployeeList_2._0
                 if (SearchDep(TextBoxNewDepName.Text,ref sameDep,oldName))
                 {
                     mainForm.SelectRowInDataGrid(dataGrid, sameDep.Id); //выделяем строку с похожим отделом
+                    WriteLog($"WARN. Отдел c именем \"{newDepName}\" или похожий уже есть");
                     MessageBox.Show($"Отдел c именем \"{newDepName}\" или похожий уже есть!");
                 }   
                 else
                 {
                     list.СhangeDep(requiredDep, TextBoxNewDepName.Text); //изменяем название отдела
                     mainForm.RefreshMainForm(dataGrid, list.Departments); //обновляем главную форму
+                    mainForm.RefreshMainForm(dataGridEmp,list.Employees);
                     mainForm.SelectRowInDataGrid(dataGrid, requiredDep.Id); //выделяем нужную строку
+                    dataGridEmp.ClearSelection();
+                    WriteLog($"Info. Имя отдела \"{oldName}\" изменено на \"{requiredDep.Name}\"");
                     MessageBox.Show($"Имя отдела \"{oldName}\" изменено на \"{requiredDep.Name}\"!");
                     RestoreVisibleToOrigin(oper); //восстанавливаем видимость элементов
                 }                
@@ -146,6 +160,7 @@ namespace EmployeeList_2._0
                 //если отдел содержит сотрудников
                 if (IsEmpInDep())
                 {
+                    WriteLog($"WARN. Отдел \"{requiredDep.Name}\" удалить нельзя, так как он содержит сотрудников!");
                     MessageBox.Show($"Отдел \"{requiredDep.Name}\" удалить нельзя, так как он содержит сотрудников!");
                     RestoreVisibleToOrigin(oper);
                 }   
@@ -157,10 +172,10 @@ namespace EmployeeList_2._0
                     mainForm.RefreshMainForm(dataGridEmp, list.Employees);
                     dataGrid.ClearSelection(); //убираем выделение строки
                     dataGridEmp.ClearSelection();
+                    WriteLog($"Info. Отдел \"{requiredDep.Name}\" удален");
                     MessageBox.Show($"Отдел \"{requiredDep.Name}\" удален!");
                     RestoreVisibleToOrigin(oper);
                 }
-
             }
         }
 
@@ -223,6 +238,18 @@ namespace EmployeeList_2._0
             TextBoxNewDepName.Enabled = false;
             ButtonOK.Enabled = false;
             ButtonSearch.Enabled = false;
+        }
+
+        public void WriteLog(string message)
+        {
+            StreamWriter sw = new StreamWriter(Program.mainLog, true);
+            sw.WriteLineAsync($"[{DateTime.Now.ToString()}] : {message}");
+            sw.Close();
+        }
+
+        private void FormChangeRemDep_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            WriteLog($"Info. Форма отделов \"{Name}\" закрыта");
         }
     }
 }

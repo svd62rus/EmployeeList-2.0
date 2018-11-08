@@ -584,7 +584,9 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "EmployeeList 2.0.5";
+            this.Text = "EmployeeList 2.0.8";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.MenuStrip1.ResumeLayout(false);
             this.MenuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridDeps)).EndInit();
