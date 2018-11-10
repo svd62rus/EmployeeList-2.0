@@ -84,6 +84,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormAddDep";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Добавить отдел";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormAddDep_FormClosed);
             this.ResumeLayout(false);

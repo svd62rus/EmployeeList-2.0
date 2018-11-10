@@ -13,12 +13,12 @@ namespace EmployeeList_2._0
     {
         Regex sizeKbLogReg = new Regex(@"\s*LogSizeKb\s*=\s*\d+");
         Regex sizeKbReg = new Regex(@"\d+");
-        public int LogSizeKb { get; set; }
+        private int logSizeKb;
 
         private EmployeeList list; //лист
         private EmployeeList listTemp; //лист для проверки сохранения
 
-        private const string _emptyDepField = "[не выбрано]"; //пустое поле комбобокса отделов на главной форме
+        private string emptyDepField = "[не выбрано]"; //пустое поле комбобокса отделов на главной форме
 
         //Подписи инфо-лейблов на главной форме
         private string sumOfSalaryTitle = "Общая зарплата: ";
@@ -69,6 +69,7 @@ namespace EmployeeList_2._0
             TextBoxMaxSalary.Enabled = false;
         }
 
+        //Чтение конфига и размера логов в нем
         private void ReadConfig()
         {
             try
@@ -85,7 +86,7 @@ namespace EmployeeList_2._0
                             MatchCollection matchesTwo = sizeKbReg.Matches(match.ToString());
                             foreach (Match matchTwo in matchesTwo)
                             {
-                                LogSizeKb = int.Parse(matchTwo.ToString());
+                                logSizeKb = int.Parse(matchTwo.ToString());
                                 WriteLog($"Info. Файл {nameOfConfig} прочитан");
                                 break;
                             }
@@ -93,7 +94,7 @@ namespace EmployeeList_2._0
                     }
                     else
                     {
-                        LogSizeKb = Program.defaultLogSize;
+                        logSizeKb = Program.defaultLogSize;
                         sr.Close();
                         ResetConfig();
                         WriteLog($"WARN. Нет нужных параметров в {nameOfConfig} Файл конфигурации перезаписан в default");
@@ -101,18 +102,17 @@ namespace EmployeeList_2._0
                     }
                 }
                 sr.Close();
-
             }
             catch (Exception ex)
             {
-                LogSizeKb = Program.defaultLogSize;
+                logSizeKb = Program.defaultLogSize;
                 ResetConfig();
                 WriteLog($"ERROR. Невозможно прочитать {nameOfConfig}. Ошибка: {ex.Message}");
                 WriteLog($"Info. Файл конфигурации перезаписан в default");
             }
 
         }
-
+        //Сброс конфига
         private void ResetConfig()
         {
             try
@@ -190,7 +190,7 @@ namespace EmployeeList_2._0
         private void AddDefaultSelect()
         {
             ComboBoxDeps.Items.Clear();
-            ComboBoxDeps.Items.Add(_emptyDepField); //добавляем пункт по умолчанию
+            ComboBoxDeps.Items.Add(emptyDepField); //добавляем пункт по умолчанию
             ComboBoxDeps.SelectedIndex = 0; //его индекс нулевой 
         }
 
@@ -505,7 +505,7 @@ namespace EmployeeList_2._0
         //Вывод данных по отделу
         private void ComboBoxDeps_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (ComboBoxDeps.SelectedItem.ToString() != _emptyDepField)
+            if (ComboBoxDeps.SelectedItem.ToString() != emptyDepField)
             {
                 WriteLog(
                     $"Info. В списке выбора отдела для вывода данных был выбран отдел \"{ComboBoxDeps.SelectedItem.ToString()}\"");
@@ -837,8 +837,8 @@ namespace EmployeeList_2._0
             StreamWriter sw = new StreamWriter(Program.mainLog, true);
             sw.WriteLineAsync($"[{DateTime.Now.ToString()}] : {message}");
             sw.Close();
-            //FileInfo file = new FileInfo(Program.mainLog);
-            //if(file.Length/Program.bytePerKb >= Program.logSizeKb)
+            FileInfo file = new FileInfo(Program.mainLog);
+            //if(file.Length/Program.bytePerKb >= Size)
             //    File.Delete(Program.mainLog);
         }
 
@@ -919,6 +919,11 @@ namespace EmployeeList_2._0
                     break;
             }
             return logMessage;
+        }
+
+        private void MenuAbout_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Учебная программа EmployeeList, версия 2.0.9\rCopyright ©Sushkov D.I.  2018", "О программе");
         }
     }
 }

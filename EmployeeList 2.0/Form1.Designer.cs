@@ -79,6 +79,8 @@
             this.SumSalary = new System.Windows.Forms.Label();
             this.CountOfEmp = new System.Windows.Forms.Label();
             this.AvgSalary = new System.Windows.Forms.Label();
+            this.MenuHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridDeps)).BeginInit();
             this.ToolStrip1.SuspendLayout();
@@ -96,7 +98,8 @@
             this.MenuFile,
             this.MenuDepartmens,
             this.MenuEmployers,
-            this.MenuExport});
+            this.MenuExport,
+            this.MenuHelp});
             this.MenuStrip1.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip1.Name = "MenuStrip1";
             this.MenuStrip1.Size = new System.Drawing.Size(1008, 24);
@@ -569,6 +572,21 @@
             this.AvgSalary.TabIndex = 9;
             this.AvgSalary.Text = "AvgSalary";
             // 
+            // MenuHelp
+            // 
+            this.MenuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuAbout});
+            this.MenuHelp.Name = "MenuHelp";
+            this.MenuHelp.Size = new System.Drawing.Size(65, 20);
+            this.MenuHelp.Text = "Справка";
+            // 
+            // MenuAbout
+            // 
+            this.MenuAbout.Name = "MenuAbout";
+            this.MenuAbout.Size = new System.Drawing.Size(180, 22);
+            this.MenuAbout.Text = "О программе";
+            this.MenuAbout.Click += new System.EventHandler(this.MenuAbout_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -584,7 +602,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "EmployeeList 2.0.8";
+            this.Text = "EmployeeList";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.MenuStrip1.ResumeLayout(false);
@@ -660,6 +678,8 @@
         private System.Windows.Forms.ToolStripMenuItem MenuExport;
         private System.Windows.Forms.ToolStripMenuItem MenuExportHire;
         private System.Windows.Forms.ToolStripMenuItem MenuExportFire;
+        private System.Windows.Forms.ToolStripMenuItem MenuHelp;
+        private System.Windows.Forms.ToolStripMenuItem MenuAbout;
     }
 }
 

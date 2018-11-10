@@ -53,9 +53,9 @@
             // 
             // ButtonOK
             // 
-            this.ButtonOK.Location = new System.Drawing.Point(68, 138);
+            this.ButtonOK.Location = new System.Drawing.Point(60, 128);
             this.ButtonOK.Name = "ButtonOK";
-            this.ButtonOK.Size = new System.Drawing.Size(126, 39);
+            this.ButtonOK.Size = new System.Drawing.Size(126, 26);
             this.ButtonOK.TabIndex = 2;
             this.ButtonOK.Text = "Уволить";
             this.ButtonOK.UseVisualStyleBackColor = true;
@@ -65,7 +65,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(251, 202);
+            this.ClientSize = new System.Drawing.Size(251, 175);
             this.Controls.Add(this.ButtonOK);
             this.Controls.Add(this.LabelEmp);
             this.Controls.Add(this.ComboBoxEmps);
@@ -73,6 +73,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormEmpFire";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Уволить сотрудника";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormEmpFire_FormClosed);
             this.ResumeLayout(false);

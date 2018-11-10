@@ -117,6 +117,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormChangeRemDep";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ChangeRemove";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormChangeRemDep_FormClosed);
             this.ResumeLayout(false);

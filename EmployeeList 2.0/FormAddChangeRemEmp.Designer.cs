@@ -46,7 +46,7 @@
             // LabelSurname
             // 
             this.LabelSurname.AutoSize = true;
-            this.LabelSurname.Location = new System.Drawing.Point(60, 35);
+            this.LabelSurname.Location = new System.Drawing.Point(24, 38);
             this.LabelSurname.Name = "LabelSurname";
             this.LabelSurname.Size = new System.Drawing.Size(56, 13);
             this.LabelSurname.TabIndex = 0;
@@ -55,7 +55,7 @@
             // LabelName
             // 
             this.LabelName.AutoSize = true;
-            this.LabelName.Location = new System.Drawing.Point(60, 104);
+            this.LabelName.Location = new System.Drawing.Point(24, 93);
             this.LabelName.Name = "LabelName";
             this.LabelName.Size = new System.Drawing.Size(29, 13);
             this.LabelName.TabIndex = 1;
@@ -64,7 +64,7 @@
             // LabelPatronymic
             // 
             this.LabelPatronymic.AutoSize = true;
-            this.LabelPatronymic.Location = new System.Drawing.Point(60, 168);
+            this.LabelPatronymic.Location = new System.Drawing.Point(24, 146);
             this.LabelPatronymic.Name = "LabelPatronymic";
             this.LabelPatronymic.Size = new System.Drawing.Size(54, 13);
             this.LabelPatronymic.TabIndex = 2;
@@ -73,7 +73,7 @@
             // LabelDepartment
             // 
             this.LabelDepartment.AutoSize = true;
-            this.LabelDepartment.Location = new System.Drawing.Point(60, 252);
+            this.LabelDepartment.Location = new System.Drawing.Point(24, 197);
             this.LabelDepartment.Name = "LabelDepartment";
             this.LabelDepartment.Size = new System.Drawing.Size(38, 13);
             this.LabelDepartment.TabIndex = 3;
@@ -82,7 +82,7 @@
             // ComboBoxDeps
             // 
             this.ComboBoxDeps.FormattingEnabled = true;
-            this.ComboBoxDeps.Location = new System.Drawing.Point(149, 249);
+            this.ComboBoxDeps.Location = new System.Drawing.Point(122, 197);
             this.ComboBoxDeps.Name = "ComboBoxDeps";
             this.ComboBoxDeps.Size = new System.Drawing.Size(121, 21);
             this.ComboBoxDeps.TabIndex = 4;
@@ -90,36 +90,36 @@
             // LabelSalary
             // 
             this.LabelSalary.AutoSize = true;
-            this.LabelSalary.Location = new System.Drawing.Point(59, 325);
+            this.LabelSalary.Location = new System.Drawing.Point(24, 249);
             this.LabelSalary.Name = "LabelSalary";
-            this.LabelSalary.Size = new System.Drawing.Size(55, 13);
+            this.LabelSalary.Size = new System.Drawing.Size(92, 13);
             this.LabelSalary.TabIndex = 5;
-            this.LabelSalary.Text = "Зарплата";
+            this.LabelSalary.Text = "Зарплата р./мес";
             // 
             // TextBoxSurname
             // 
-            this.TextBoxSurname.Location = new System.Drawing.Point(149, 35);
+            this.TextBoxSurname.Location = new System.Drawing.Point(122, 35);
             this.TextBoxSurname.Name = "TextBoxSurname";
             this.TextBoxSurname.Size = new System.Drawing.Size(121, 20);
             this.TextBoxSurname.TabIndex = 6;
             // 
             // TextBoxName
             // 
-            this.TextBoxName.Location = new System.Drawing.Point(149, 104);
+            this.TextBoxName.Location = new System.Drawing.Point(122, 90);
             this.TextBoxName.Name = "TextBoxName";
             this.TextBoxName.Size = new System.Drawing.Size(121, 20);
             this.TextBoxName.TabIndex = 7;
             // 
             // TextBoxPatronymic
             // 
-            this.TextBoxPatronymic.Location = new System.Drawing.Point(149, 168);
+            this.TextBoxPatronymic.Location = new System.Drawing.Point(122, 143);
             this.TextBoxPatronymic.Name = "TextBoxPatronymic";
             this.TextBoxPatronymic.Size = new System.Drawing.Size(121, 20);
             this.TextBoxPatronymic.TabIndex = 8;
             // 
             // TextBoxSalary
             // 
-            this.TextBoxSalary.Location = new System.Drawing.Point(149, 322);
+            this.TextBoxSalary.Location = new System.Drawing.Point(122, 246);
             this.TextBoxSalary.Name = "TextBoxSalary";
             this.TextBoxSalary.Size = new System.Drawing.Size(121, 20);
             this.TextBoxSalary.TabIndex = 9;
@@ -127,7 +127,7 @@
             // 
             // ButtonOK
             // 
-            this.ButtonOK.Location = new System.Drawing.Point(62, 407);
+            this.ButtonOK.Location = new System.Drawing.Point(27, 329);
             this.ButtonOK.Name = "ButtonOK";
             this.ButtonOK.Size = new System.Drawing.Size(75, 23);
             this.ButtonOK.TabIndex = 10;
@@ -137,7 +137,7 @@
             // 
             // ButtonCancel
             // 
-            this.ButtonCancel.Location = new System.Drawing.Point(330, 407);
+            this.ButtonCancel.Location = new System.Drawing.Point(268, 329);
             this.ButtonCancel.Name = "ButtonCancel";
             this.ButtonCancel.Size = new System.Drawing.Size(75, 23);
             this.ButtonCancel.TabIndex = 11;
@@ -147,7 +147,7 @@
             // 
             // ButtonSearch
             // 
-            this.ButtonSearch.Location = new System.Drawing.Point(330, 164);
+            this.ButtonSearch.Location = new System.Drawing.Point(268, 141);
             this.ButtonSearch.Name = "ButtonSearch";
             this.ButtonSearch.Size = new System.Drawing.Size(75, 23);
             this.ButtonSearch.TabIndex = 12;
@@ -159,7 +159,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(428, 450);
+            this.ClientSize = new System.Drawing.Size(374, 364);
             this.Controls.Add(this.ButtonSearch);
             this.Controls.Add(this.ButtonCancel);
             this.Controls.Add(this.ButtonOK);
@@ -177,6 +177,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormAddChangeRemEmp";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "AddChange";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormAddChangeRemEmp_FormClosed);
             this.ResumeLayout(false);

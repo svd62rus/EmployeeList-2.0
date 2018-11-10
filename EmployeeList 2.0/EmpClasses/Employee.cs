@@ -41,7 +41,6 @@ namespace EmployeeList_2._0.EmpClasses
                 return true;
             return Id.Equals(other.Id) && Name.Equals(other.Name) &&
                    Surname.Equals(other.Surname) && Patronymic.Equals(other.Patronymic) &&
-                   /*FullName.Equals(other.FullName) &&*/
                    DepartmentId.Equals(other.DepartmentId) && IsFired.Equals(other.IsFired) && 
                    Salary.Equals(other.Salary) && DateHired.Equals(other.DateHired) && 
                    DateFired.Equals(other.DateFired);

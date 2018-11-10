@@ -1,0 +1,17 @@
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\bin\Release\EmployeeList 2.0.exe.config
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\bin\Release\EmployeeList 2.0.exe
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\bin\Release\EmployeeList 2.0.pdb
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\bin\Release\ExportManager.dll
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\bin\Release\ExportManager.pdb
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList 2.0.csprojAssemblyReference.cache
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList_2._0.Form1.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList_2._0.FormAddDep.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList_2._0.FormAddChangeRemEmp.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList_2._0.FormChangeRemDep.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList_2._0.FormEmpFire.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList_2._0.Properties.Resources.resources
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList 2.0.csproj.GenerateResource.cache
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList 2.0.csproj.CoreCompileInputs.cache
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList 2.0.csproj.CopyComplete
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList 2.0.exe
+D:\VSProjects\EmployeeList 2.0\EmployeeList 2.0\obj\Release\EmployeeList 2.0.pdb
