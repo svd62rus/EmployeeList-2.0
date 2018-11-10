@@ -1,5 +1,6 @@
-# EmployeeList-2.0
-Мин. разрешение для запуска программы 1024х768, версия .Net Framework 4.5
+# EmployeeList 2.0.9
+
+Для установки распакуйте архив EmployeeList.zip в любую доступную папку. Мин. разрешение для запуска программы 1024х768, версия .Net Framework 4.5
 ---------------------------------------------------------------------------
 Программа, сделанная в качестве учебного задания. В программе реализованы:
 
@@ -17,7 +18,7 @@
 
 -собственный логгер, который пишет информацию в employee_list.log
 
-Min resolution to run the program 1024x768, version .Net Framework 4.5
+To install, unzip the EmployeeList.zip archive to any available folder. Min resolution to run the program 1024x768, version .Net Framework 4.5
 ------------------------------------------------------------------------
 The program, made as an educational task.The program implemented:
 
